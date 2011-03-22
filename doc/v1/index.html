@@ -1,0 +1,2080 @@
+<html>
+  <head>
+    <title>TripIt API Documentation - v1</title>
+  <style type="text/css">
+    body { font: normal 12px Arial, Helvetica, Verdana, sans-serif; }
+    h2 { background-color: #cccccc; padding: 1px; }
+    h3 { background-color: #aaffff; margin: 10px; padding: 1px; }
+    h4 { background-color: #ccffcc; margin: 20px; padding: 1px; }
+    p { margin: 30px; }
+    ul { margin: 30px; }
+    pre { background-color: #cccccc; padding: 1px; border: 1px; border-style: solid; align: center; margin: 40px; }
+    .note { background-color: #ffff00; padding: 1px; border: 1px; border-style: solid; align: center; margin: 40px; }
+    table { border: 1px; border-style: solid; padding: 0px; width: 80%; margin-left: auto; margin-right: auto; }
+    table th { border: 1px; border-style: solid; }
+    table td { border: 1px; border-style: solid; }
+  </style>
+  </head>
+  <body>
+    <h1>TripIt API Documentation - v1</h1>
+
+    <h2>Index</h2>
+      <ul>
+        <li><a href="#overview_section">Overview</a></li>
+        <li><a href="#authentication_section">Authentication</a></li>
+        <li><a href="#encoding_section">Encoding</a></li>
+        <li><a href="#resource_section">Resource URLs</a></li>
+        <li><a href="#http_status_codes_section">HTTP Status Codes</a></li>
+        <li><a href="#request_response_section">Request/Response Objects</a></li>
+        <li><a href="#pro_data_section">TripIt Pro Data</a></li>
+        <li><a href="#deprecation_policy_section">Deprecation Policy</a></li>
+        <li><a href="#release_notes_section">Release Notes</a></li>
+        <li><a href="#examples_section">Example</a></li>
+      </ul>
+
+    <h2 id="overview_section">Overview</h2>
+    <p>
+      The TripIt API allows a developer to programatically create,
+      delete, and retrieve objects from the TripIt platform.  The v1
+      API supports all of the object types that the TripIt platform is
+      currently capable of managing.  The list of object types is as
+      follows:
+    </p>
+    <p>
+      <ul>
+        <li>AirObject</li>
+        <li>ActivityObject</li>
+        <li>CarObject</li>
+        <li>CruiseObject</li>
+        <li>DirectionsObject</li>
+        <li>LodgingObject</li>
+        <li>MapObject</li>
+        <li>NoteObject</li>
+        <li>ProfileObject</li>
+        <li>RailObject</li>
+        <li>RestaurantObject</li>
+        <li>TransportObject</li>
+        <li>TripObject</li>
+        <li>WeatherObject <i>read-only</i></li>
+      </ul>
+    </p>
+    <p>
+      In addition to being capable of directly creating, deleting, and
+      retrieving these objects the API can retrieve lists of objects
+      such as all of a user's upcoming trips or all travel objects
+      contained within a specific trip.
+    </p>
+    <p>
+      For status on maintenance windows and operational issues related
+      to the API please go to our status blog
+      at <a href="http://status.tripit.com/">status.tripit.com</a>.
+    </p>
+
+    <h2 id="authentication_section">Authentication</h2>
+    <h3>Web Authentication</h3>
+
+    <p>
+      The TripIt API offers a very simple way of authenticating the
+      API that should only be used for testing and development
+      purposes.  When building an application you should ultimately
+      use the OAuth authentication scheme for allowing TripIt users to
+      grant access to their data for your application.  Note that this
+      authentication scheme is <b>off</b> by default for every TripIt
+      user.  If you want to have this turned on for your account so
+      you can use it for development purposes please send email to
+      support@tripit.com.  Enabling Basic Authentication for an account
+      does not disable OAuth authentication for that same account.
+    </p>
+    <p>
+      The web authentication scheme relies on HTTP's
+      authentication <a href="http://www.ietf.org/rfc/rfc2617.txt">RFC</a>
+      to authenticate clients of the TripIt API using a TripIt
+      username (i.e. email address) and password.  This authentication
+      scheme may be limited or turned off by default in future
+      versions of the TripIt platform and therefore should not be
+      relied upon for production application development.  It is a
+      very simple and useful way to get started with the API.
+    </p>
+    <p>
+      To make a web authenticated request of the API simply add the
+      following HTTP header into the request:
+    </p>
+    <p>
+      <pre>Authorization: Basic &lt;base64 encoded token&gt;</pre>
+    </p>
+    <p>
+      Where <i>&lt;token&gt;</i> is
+      a <a href="http://en.wikipedia.org/wiki/Base64">base64</a>
+      encoded string that includes the TripIt user's email address and
+      password separated by a colon
+      (i.e. <i>example@example.com<b>:</b>secretpassword</i>).  Here is
+      an example:
+    </p>
+    <p>
+      TripIt user <i>example@example.com</i> has a password
+      of <i>secretpassword</i>.  A client trying to authenticate with
+      the API as this user would send the following
+      HTTP <i>Authorization</i> header with each request:
+      <pre>Authorization: Basic ZGVubWFya0B0cmlwaXQuY29tOnNlY3JldHBhc3N3b3Jk</pre>
+    </p>
+    <p>The API does
+      not manage sessions so it is required that a client send the
+      user's credentials on every request.
+    </p>
+    <h4>Web Authentication Example</h4>
+    <p>
+      Here is a simple example of how you might
+      use <a href="http://curl.haxx.se/">curl</a> to query the API via
+      the web authentication scheme:
+    </p>
+    <p>
+      <pre>
+$ curl -k -D /dev/tty --user &lt;username&gt;:&lt;password&gt; https://api.tripit.com/v1/list/trip
+HTTP/1.1 200 OK
+Server: nginx/0.6.32
+Date: Wed, 03 Dec 2008 21:55:59 GMT
+Content-Type: text/xml; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Expires: Thu, 19 Nov 1981 08:52:00 GMT
+Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Pragma: no-cache
+
+&lt;Response&gt;
+  &lt;Trip&gt;
+    &lt;id&gt;770827&lt;/id&gt;
+    &lt;start_date&gt;2008-12-17&lt;/start_date&gt;
+    &lt;end_date&gt;2008-12-27&lt;/end_date&gt;
+    &lt;display_name&gt;New York, NY, December 2008&lt;/display_name&gt;
+    &lt;image_url&gt;/images/places/general.jpg&lt;/image_url&gt;
+    &lt;is_private&gt;false&lt;/is_private&gt;
+    &lt;is_traveler&gt;true&lt;/is_traveler&gt;
+    &lt;primary_location&gt;New York, NY&lt;/primary_location&gt;
+    &lt;PrimaryLocationAddress&gt;
+        &lt;address&gt;New York, NY&lt;/address&gt;
+        &lt;city&gt;New York&lt;/city&gt;
+        &lt;state&gt;NY&lt;/state&gt;
+        &lt;country&gt;US&lt;/country&gt;
+        &lt;latitude&gt;40.714269&lt;/latitude&gt;
+        &lt;longitude&gt;-74.005973&lt;/longitude&gt;
+    &lt;/PrimaryLocationAddress&gt;
+  &lt;/Trip&gt;
+&lt;/Response&gt;
+</pre>
+    </p>
+    <h3>OAuth</h3>
+    <h4>References</h4>
+    <p>
+      For more information about
+      the <a href="http://oauth.net/">OAuth</a> specification the
+      following references are useful:
+    </p>
+    <p>
+      <ul>
+        <li><a href="http://oauth.net/">OAuth Specification</a></li>
+        <li><a href="http://code.google.com/p/oauth/">Reference Implementations</a></li>
+        <li><a href="http://www.hueniverse.com/hueniverse/2007/10/beginners-guide.html">Beginner's Guide to OAuth - Part I: Overview</a></li>
+        <li><a href="http://www.hueniverse.com/hueniverse/2007/10/beginners-gui-1.html">Beginner's Guide to OAuth - Part II : Protocol Workflow</a></li>
+        <li><a href="http://www.hueniverse.com/hueniverse/2008/10/beginners-guide.html">Beginner's Guide to OAuth - Part III : Security Architecture</a></li>
+        <li><a href="http://www.hueniverse.com/hueniverse/2008/10/beginners-gui-1.html">Beginner's Guide to OAuth - Part IV: Signing Requests</a></li>
+        <li><a href="http://blog.andydenmark.com/2009/03/how-to-build-oauth-consumer.html">How to Build an OAuth Consumer</a></li>
+      </ul>
+    </p>
+    <p>
+      It is beyond the scope of this document to describe the
+      fundamental concepts of the OAuth specification.  It is
+      recommended that anyone trying to implement an OAuth Consumer of
+      the TripIt API should be familiar with the documentation listed
+      in the 'References' section as the rest of the documentation is
+      written assuming the reader understands OAuth terminology and
+      concepts.  The following 4 steps is heavily modeled on the OAuth
+      1.0 specification document itself.  The similarities are not a
+      coincidence and each step tracks back to the relevant section in
+      the spec so the reader can more easily follow along.
+    </p>
+    <h4>Consumer Storage Requirements</h4>
+    <p>
+      During the following steps you will need to store data from the
+      consumer and associate it with the user account in the consumer.
+      Here's a summary of what the consumer needs to store, when it
+      needs to store it, and for how long.
+    </p>
+    <table>
+      <tr>
+        <th>What</th><th>When</th><th>Until</th><th>Description</th>
+      </tr>
+      <tr>
+        <td>oauth_token (request token)</td>
+        <td>After Step 1</td>
+        <td>After Step 3</td>
+        <td>This is the <i>public</i> part of the request token and is
+        needed to obtain user authorization (step 2) and obtain an
+        authorized access token (step 3).  After step 3 it can be
+        safely discarded and replaced with its authorized
+        counterpart.</td>
+      </tr>
+      <tr>
+        <td>oauth_token_secret (request token)</td>
+        <td>After Step 1</td>
+        <td>After Step 3</td>
+        <td>This is the <i>private</i> part of the request token and is
+        needed to obtain user authorization (step 2) and obtain an
+        authorized access token (step 3).  After step 3 it can be
+        safely discarded and replaced with its authorized
+        counterpart.</td>
+      </tr>
+      <tr>
+        <td>oauth_token (authorized access token)</td>
+        <td>After step 3</td>
+        <td>Indefinitely</td>
+        <td>This is the <i>public</i> part of the authorized access
+        token that a consumer needs to access protected resources on
+        behalf of a TripIt user.  If all goes well and the TripIt user
+        grants access to the consumer the consumer should be able to
+        obtain this after step 3.  It should be stored indefinitely
+        and associated with the user's account on the consumer.</td>
+      </tr>
+      <tr>
+        <td>oauth_token_secret (authorized access token)</td>
+        <td>After step 3</td>
+        <td>Indefinitely</td>
+        <td>This is the <i>private</i> part of the authorized access
+        token that a consumer needs to access protected resources on
+        behalf of a TripIt user.  If all goes well and the TripIt user
+        grants access to the consumer the consumer should be able to
+        obtain this after step 3.  It should be stored indefinitely
+        and associated with the user's account on the consumer.</td>
+      </tr>
+    </table>
+
+    <h4>Step 1: Obtaining a Request Token (<a href="http://oauth.net/core/1.0/#auth_step1">Section 6.1</a>)</h4>
+    <p>
+      To obtain a request token POST the following request parameters to the URL:
+      <pre>https://api.tripit.com/oauth/request_token</pre>
+    </p>
+    <table>
+      <tr>
+        <th>parameter name</th><th>parameter description</th>
+      </tr>
+      <tr>
+        <td>oauth_consumer_key</td>
+        <td>The Consumer's public key.</td>
+      </tr>
+      <tr>
+        <td>oauth_nonce</td>
+        <td>A nonce no more than 80 characters in length.</td>
+      </tr>
+      <tr>
+        <td>oauth_signature</td>
+        <td>The signature of the request.  The algorithm to sign the
+        request is described in the OAuth specification and examples
+        can be found in the reference implementations.</td>
+      </tr>
+      <tr>
+        <td>oauth_signature_method</td>
+        <td>The method used to generate the method signature.  Current
+        supported methods are HMAC-SHA1.</td>
+      </tr>
+      <tr>
+        <td>oauth_timestamp</td>
+        <td>The timestamp in seconds since the epoch given in UTC.  Note that
+        the server will respond with a 401 (unauthorized) if the timestamp
+        supplied by the client is more than +/- 3 hours from what the server
+        considers the current time.</td>
+      </tr>
+      <tr>
+        <td>oauth_version</td>
+        <td>OPTIONAL - Assumed to be '1.0'</td>
+      </tr>
+    </table>
+    <p>
+      The server will respond with the following in the response body:
+      <pre>oauth_token=7d41de0eaf0d518786851a64bf7505e29177b75e&amp;oauth_token_secret=2e8c29e961d02a1aa61b916c908c90200fcdef7e</pre>
+      These are the unauthorized access token and secret that will be
+      needed to obtain user authorization in step 2.  The Consumer
+      should store both values for future use.
+    </p>
+    <h4>Step 2: Obtain User Authorization (<a href="http://oauth.net/core/1.0/#auth_step2">Section: 6.2</a>)</h4>
+    <p>
+      Using the unauthorized access token obtained in step 1 the
+      Consumer application should redirect the user to the following
+      page:
+      <pre>https://www.tripit.com/oauth/authorize?oauth_token=&lt;oauth_token&gt;&amp;oauth_callback=&lt;oauth_callback&gt;</pre>
+      Alternatively, if you are trying to authorize on a mobile app such as an iPhone, direct the user to here:
+      <pre>https://m.tripit.com/oauth/authorize?oauth_token=&lt;oauth_token&gt;&amp;oauth_callback=&lt;oauth_callback&gt;</pre>
+      The two request parameters have the following meaning:
+    </p>
+    <p class="note">
+      <b>NOTE:</b> It is extremely important that you clearly redirect
+      the user to the TripIt URL so they have confidence that they
+      aren't being phished for their TripIt username and password.
+      This means you should make sure on a regular browser that the
+      frame you use to redirect the user has the address bar of the
+      frame clearly visible.  On a mobile device such as an iPhone you
+      should launch Safari and not use the embedded WebView class.
+    </p>
+    <table>
+      <tr>
+        <th>parameter name</th>
+        <th>parameter description</th>
+      </tr>
+      <tr>
+        <td>oauth_callback</td>
+        <td>This is the callback URL that TripIt will use upon
+        successful access token authorization.  This parameter is
+        optional if you associated a URL with your application when
+        you registered it and obtained your OAuth consumer key and
+        secret.  If you supplied a URL when you registered the
+        application, providing this request parameter will override
+        that value.  If neither the application URL is set nor the
+        oauth_callback parameter is supplied the user will get an
+        error when taken to the /oauth/authorize page and will be
+        unable to authorize the access token.  It is highly encouraged
+        that you explicitly provide an oauth_callback URL when linking
+        to the /oauth/authorize page.  Providing this URL gives you the
+        flexibility of defining a different URL that is associated with
+        your action on which you can provide marketing text and a
+        description of your application and what it does.</td>
+      </tr>
+      <tr>
+        <td>oauth_token</td>
+        <td>The oauth_token obtained in step 1.  This is the access
+        token the Consumer will now be trying to get the user of to
+        authorize.</td>
+      </tr>
+    </table>
+    <p>
+      If the user is able to successfully log in to TripIt and chooses
+      to grant authority to the Consumer application (or not), the
+      user is redirected back to the oauth_callback or default URL
+      with a single request parameter: oauth_token.  At this point the
+      Consumer does not know whether or not the oauth_token has been
+      successfully authorized.  To find out, the Consumer must
+      implement step 3.
+    </p>
+    <h4>Step 3: Obtaining an Access Token (<a href="http://oauth.net/core/1.0/#auth_step3">Section 6.3</a>)</h4>
+    <p>
+      To obtain an authorized access token, POST the following request
+      parameters to the URL:
+      <pre>https://api.tripit.com/oauth/access_token</pre>
+    </p>
+    <table>
+      <tr>
+        <th>parameter name</th><th>parameter description</th>
+      </tr>
+      <tr>
+        <td>oauth_consumer_key</td>
+        <td>The Consumer's public key.</td>
+      </tr>
+      <tr>
+        <td>oauth_nonce</td>
+        <td>A nonce no more than 80 characters in length.</td>
+      </tr>
+      <tr>
+        <td>oauth_signature</td>
+        <td>The signature of the request.  The algorithm to sign the
+        request is described in the OAuth specification and examples
+        can be found in the reference implementations.</td>
+      </tr>
+      <tr>
+        <td>oauth_signature_method</td>
+        <td>The method used to generate the method signature.  Current
+        supported methods are HMAC-SHA1.</td>
+      </tr>
+      <tr>
+        <td>oauth_timestamp</td>
+        <td>The timestamp in seconds since the epoch.</td>
+      </tr>
+      <tr>
+        <td>oauth_token</td>
+        <td>The request token obtained in Step 1.</td>
+      </tr>
+      <tr>
+        <td>oauth_token_secret</td>
+        <td>The request token secret obtained in Step 1.</td>
+      </tr>
+      <tr>
+        <td>oauth_version</td>
+        <td>OPTIONAL - Assumed to be '1.0'</td>
+      </tr>
+    </table>
+    <p>
+      The server will respond with the following in the response body:
+      <pre>oauth_token=c174450a65d9d5e72de2910fed22fb8879fb1439&amp;oauth_token_secret=1d1291e53cf3f9e89c377109f0ccee244a95d273</pre>
+      These are the authorized access token and secret that will be
+      needed to make future API requests on behalf of the user that
+      authorized them.  The Consumer should store both values until
+      the user asks for the Consumer to forget about them either
+      directly or indirectly (e.g. the user delete's their account
+      with the Consumer application).
+    </p>
+    <h4>Step 4: Accessing Protected Resources (<a href="http://oauth.net/core/1.0/#anchor13">Section: 7</a>)</h4>
+    <p>
+      Once the Consumer has obtained an authorized access token from
+      the service provider it can now make requests of the API on
+      behalf of the user that authorized the acccess token.  To make
+      an OAuth authenticated request send the following parameters in
+      the Authorization header of the request:
+      <pre>
+        Authorization: OAuth realm="https://api.tripit.com/",
+          oauth_consumer_key="consumer public key",
+          oauth_token="authorized access token",
+          oauth_signature_method="HMAC-SHA1",
+          oauth_signature="request signature",
+          oauth_timestamp="1229622199",
+          oauth_nonce="9b308304f41a4ac04fb4c4ce980c5277",
+          oauth_version="1.0"</pre>
+    </p>
+    <p>
+      The parameters in the Authorization header are defined as
+      follows:
+    </p>
+    <p>
+      <table>
+        <tr>
+          <th>parameter name</th><th>parameter description</th>
+        </tr>
+        <tr>
+          <td>oauth_consumer_key</td>
+          <td>The consumer's public key.</td>
+        </tr>
+        <tr>
+          <td>oauth_nonce</td>
+          <td>A nonce no more than 80 characters in length.</td>
+        </tr>
+        <tr>
+          <td>oauth_signature</td>
+          <td>The signature of the request.  The algorithm to sign the
+            request is described in the OAuth specification and examples
+            can be found in the reference implementations.</td>
+        </tr>
+        <tr>
+          <td>oauth_signature_method</td>
+          <td>The method used to generate the method signature.  Current
+            supported methods are HMAC-SHA1.</td>
+        </tr>
+        <tr>
+          <td>oauth_timestamp</td>
+          <td>The timestamp in seconds since the epoch.</td>
+        </tr>
+        <tr>
+          <td>oauth_token</td>
+          <td>The authorized access token obtained in Step 3.</td>
+        </tr>
+        <tr>
+          <td>oauth_version</td>
+          <td>OPTIONAL - Assumed to be '1.0'</td>
+        </tr>
+      </table>
+    </p>
+    <p>
+      All other aspects of a successfully authenticated OAuth request
+      are identical to a web authenticated request except that the
+      authorized access token may grant the consumer less permission
+      to read, create, and modify data than a web authenticated
+      request which has the exact same permissions a user has when
+      logged in to TripIt via the web.
+    </p>
+
+    <h2 id="encoding_section">Encoding</h2>
+    <p>
+      The TripIt API expects all data to be encoded
+      in <a href="http://www.utf-8.com/">UTF-8</a>.  Similarly, all
+      data out of the API will be encoded
+      in <a href="http://www.utf-8.com/">UTF-8</a>.
+    </p>
+    <p>
+      All data POSTed to the API must also
+      be <a href="http://en.wikipedia.org/wiki/Percent-encoding">URL
+      encoded</a>.
+    </p>
+    <h2 id="resource_section">Resource URLs</h2>
+    <p>
+      There are currently four types of requests supported by the API
+      (<i>get</i>, <i>list</i>, <i>create</i>, and <i>delete</i>).
+      Each is explained below in greater detail.
+    </p>
+    <h3>Common Query Parameters</h3>
+    <p>
+      There is one common query parameter: 'format'.  It can be set to
+      'xml' or 'json' depending on what format the Request/Response
+      objects are in.  Note: If 'format' is not specified, 'xml' is
+      assumed as the default.
+    </p>
+    <p>
+      Even thought the default format is XML, we recommend JSON over
+      XML.  Using the JSON format will reduce the size of the response
+      data by a large factor: 50% or more.  Adding "Accept-Encoding:
+      gzip" to the HTTP request headers will also reduce the size of
+      the response by a large factor.  Finally, please add an
+      appropriate "User-agent" to the request headers with the name
+      and version of your application.  When using JSON, it's not
+      necessary to wrap the JSON in a {"Request" : ... }.  Simply send
+      the object.
+    </p>
+    <h3>get</h3>
+    <p>
+      A <i>get</i> request is used to retrieve a specific object from
+      the TripIt API given its TripIt object ID.  Since <i>get</i>
+      requests do not change data they are all made via an HTTP GET
+      request for a URL that takes the following form:
+    </p>
+    <p>
+      <pre>https://api.tripit.com/v1/get/&lt;object type&gt;/id/&lt;TripIt Object ID&gt;</pre>
+    </p>
+    <p>
+      &lt;object type&gt; is one of the following strings:
+      <ul>
+        <li>air</li>
+        <li>activity</li>
+        <li>car</li>
+        <li>cruise</li>
+        <li>directions</li>
+        <li>lodging</li>
+        <li>map</li>
+        <li>note</li>
+        <li>points_program</li>
+        <li>profile</li>
+        <li>rail</li>
+        <li>restaurant</li>
+        <li>transport</li>
+        <li>trip</li>
+        <li>weather</li>
+     </ul>
+    </p>
+    <p>
+      &lt;TripIt Object ID&gt; is the object ID of the TripIt object being requested.
+    </p>
+    <p>
+      The <i>get</i> request for a <b>trip</b> object can take an optional
+      filter parameter called <i>include_objects</i>.  The default
+      value for this parameter is false but if it is set to true then
+      the response from the API will include all objects
+      (e.g. <b>air</b>, <b>car</b>, <b>lodging</b>, etc...) that are
+      associated with that trip.  This enables an API client to
+      request a trip and all of its associated objects in a single
+      call.
+   </p>
+    <h4>Example:</h4>
+    <p>
+      Here is a sample <i>get</i> request for a Note object:
+    </p>
+    <p>
+      <pre>
+$ curl -k -D /dev/tty --user &lt;username&gt;:&lt;password&gt; https://api.tripit.com/v1/get/note/id/586853
+HTTP/1.1 200 OK
+Server: nginx/0.6.32
+Date: Wed, 03 Dec 2008 23:05:30 GMT
+Content-Type: text/xml; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Expires: Thu, 19 Nov 1981 08:52:00 GMT
+Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Pragma: no-cache
+
+&lt;Response&gt;
+  &lt;NoteObject&gt;
+    &lt;id&gt;586853&lt;/id&gt;
+    &lt;display_name&gt;Note&lt;/display_name&gt;
+    &lt;DateTime&gt;
+      &lt;date&gt;2008-12-09&lt;/date&gt;
+      &lt;time&gt;14:00:00&lt;/time&gt;
+      &lt;timezone&gt;America/Los_Angeles&lt;/timezone&gt;
+      &lt;utc_offset&gt;-8:00&lt;/utc_offset&gt;
+    &lt;/DateTime&gt;
+    &lt;Address&gt;
+      &lt;addr1&gt;444 DeHaro St.&lt;/addr1&gt;
+      &lt;city&gt;San Francisco&lt;/city&gt;
+      &lt;state&gt;CA&lt;/state&gt;
+      &lt;zip&gt;94107&lt;/zip&gt;
+      &lt;country&gt;US&lt;/country&gt;
+      &lt;latitude&gt;37.764169&lt;/latitude&gt;
+      &lt;longitude&gt;-122.402021&lt;/longitude&gt;
+    &lt;/Address&gt;
+    &lt;text&gt;Test note.&lt;/text&gt;
+    &lt;url&gt;http://www.tripit.com/&lt;/url&gt;
+  &lt;/NoteObject&gt;
+&lt;/Response&gt;
+$</pre>
+    </p>
+    <p>
+      Here is a sample <i>get</i> request for a Note object using JSON:
+    </p>
+    <p>
+      <pre>
+$ curl -k -D /dev/tty --user &lt;username&gt;:&lt;password&gt; https://api.tripit.com/v1/get/note/id/21765621/format/json
+HTTP/1.1 200 OK
+Server: nginx
+Date: Mon, 27 Sep 2010 18:26:37 GMT
+Content-Type: application/json
+Transfer-Encoding: chunked
+Connection: keep-alive
+Cache-Control: private
+
+{ "timestamp":"1285611997",
+  "num_bytes":"880",
+  "NoteObject": {
+    "id":"217623621",
+    "trip_id":"301454907",
+    "is_client_traveler":"false",
+    "relative_url":"\/trip_item\/show\/id\/21235681",
+    "display_name":"A fine note",
+    "Image":{
+      "url":"https:\/\/www.tripit.com\/uploads\/images\/0\/2\/2\/00235a44aba776c3abc123def016079631ac285f622.jpg",
+      "caption":"Andy's Picture"
+    },
+    "DateTime":{
+      "date":"2009-11-10",
+      "time":"14:00:00",
+      "timezone":"America\/Los_Angeles",
+      "utc_offset":"-08:00"
+    },
+    "Address":{
+      "address":"444 DeHaro St., San Francisco, CA, 94107",
+      "addr1":"444 DeHaro St.",
+      "city":"San Francisco",
+      "state":"CA",
+      "zip":"94107",
+      "country":"US",
+      "latitude":"37.764246",
+      "longitude":"-122.401694"
+    },
+    "text":"This is my note",
+    "url":"http:\/\/www.tripit.com"
+  }
+}</pre>
+    </p>
+    <p>
+      Here is another example using the include_objects filter
+      parameter set to true.  Notice how you get the
+      &lt;Trip&gt; plus the &lt;AirObject&gt;, and
+      &lt;WeatherObject&gt; sections that are associated with the
+      trip.
+   </p>
+    <p>
+      <pre>
+$ curl -D /dev/tty --user &lt;username&gt;:&lt;password&gt; 'https://api.tripit.com/v1/get/trip/id/2785341/include_objects/true'
+HTTP/1.1 200 OK
+Server: nginx
+Date: Tue, 03 Nov 2009 00:31:35 GMT
+Content-Type: text/xml; charset=utf-8
+Transfer-Encoding: chunked
+Connection: close
+Cache-Control: private
+
+&lt;Response&gt;
+  &lt;timestamp&gt;1257208295&lt;/timestamp&gt;
+  &lt;num_bytes&gt;4630&lt;/num_bytes&gt;
+  &lt;Trip&gt;
+    &lt;TripInvitees&gt;
+      &lt;Invitee profile_ref="VPNrwg9_2vW2j3DHX_pAzA"&gt;
+        &lt;is_read_only&gt;false&lt;/is_read_only&gt;
+        &lt;is_traveler&gt;true&lt;/is_traveler&gt;
+      &lt;/Invitee&gt;
+    &lt;/TripInvitees&gt;
+    &lt;id&gt;2785341&lt;/id&gt;
+    &lt;relative_url&gt;/trip/show/id/2785341&lt;/relative_url&gt;
+    &lt;start_date&gt;2009-10-04&lt;/start_date&gt;
+    &lt;end_date&gt;2009-11-23&lt;/end_date&gt;
+    &lt;display_name&gt;Vienna, Austria, October 2009&lt;/display_name&gt;
+    &lt;image_url&gt;http://www.tripit.com/images/places/general.jpg&lt;/image_url&gt;
+    &lt;is_private&gt;true&lt;/is_private&gt;
+    &lt;primary_location&gt;Vienna, Austria&lt;/primary_location&gt;
+    &lt;PrimaryLocationAddress&gt;
+        &lt;address&gt;Vienna, Austria&lt;/address&gt;
+        &lt;city&gt;Vienna&lt;/city&gt;
+        &lt;state&gt;Vienna&lt;/state&gt;
+        &lt;country&gt;AT&lt;/country&gt;
+        &lt;latitude&gt;48.208488&lt;/latitude&gt;
+        &lt;longitude&gt;16.372075&lt;/longitude&gt;
+    &lt;/PrimaryLocationAddress&gt;
+  &lt;/Trip&gt;
+  &lt;AirObject&gt;
+    &lt;id&gt;4042627&lt;/id&gt;
+    &lt;trip_id&gt;2785341&lt;/trip_id&gt;
+    &lt;is_client_traveler&gt;true&lt;/is_client_traveler&gt;
+    &lt;relative_url&gt;/reservation/show/id/4042627&lt;/relative_url&gt;
+    &lt;display_name&gt;Your Flight&lt;/display_name&gt;
+    &lt;is_purchased&gt;true&lt;/is_purchased&gt;
+    &lt;Segment&gt;
+      &lt;Status&gt;
+        &lt;EstimatedDepartureDateTime&gt;
+          &lt;date&gt;2009-11-09&lt;/date&gt;
+          &lt;time&gt;13:45:00&lt;/time&gt;
+          &lt;timezone&gt;America/Los_Angeles&lt;/timezone&gt;
+          &lt;utc_offset&gt;-08:00&lt;/utc_offset&gt;
+        &lt;/EstimatedDepartureDateTime&gt;
+        &lt;EstimatedArrivalDateTime&gt;
+          &lt;date&gt;2009-11-09&lt;/date&gt;
+          &lt;time&gt;14:45:00&lt;/time&gt;
+          &lt;timezone&gt;America/Chicago&lt;/timezone&gt;
+          &lt;utc_offset&gt;-06:00&lt;/utc_offset&gt;
+        &lt;/EstimatedArrivalDateTime&gt;
+        &lt;flight_status&gt;401&lt;/flight_status&gt;
+        &lt;is_connection_at_risk&gt;false&lt;/is_connection_at_risk&gt;
+        &lt;last_modified&gt;1256770662&lt;/last_modified&gt;
+      &lt;/Status&gt;
+      &lt;StartDateTime&gt;
+        &lt;date&gt;2009-11-09&lt;/date&gt;
+        &lt;time&gt;13:00:00&lt;/time&gt;
+        &lt;timezone&gt;America/Los_Angeles&lt;/timezone&gt;
+        &lt;utc_offset&gt;-08:00&lt;/utc_offset&gt;
+      &lt;/StartDateTime&gt;
+      &lt;EndDateTime&gt;
+        &lt;date&gt;2009-11-09&lt;/date&gt;
+        &lt;time&gt;14:00:00&lt;/time&gt;
+        &lt;timezone&gt;America/Chicago&lt;/timezone&gt;
+        &lt;utc_offset&gt;-06:00&lt;/utc_offset&gt;
+      &lt;/EndDateTime&gt;
+      &lt;start_airport_code&gt;SFO&lt;/start_airport_code&gt;
+      &lt;start_airport_latitude&gt;37.618889&lt;/start_airport_latitude&gt;
+      &lt;start_airport_longitude&gt;-122.375&lt;/start_airport_longitude&gt;
+      &lt;start_city_name&gt;San Francisco&lt;/start_city_name&gt;
+      &lt;end_airport_code&gt;ORD&lt;/end_airport_code&gt;
+      &lt;end_airport_latitude&gt;41.978056&lt;/end_airport_latitude&gt;
+      &lt;end_airport_longitude&gt;-87.906111&lt;/end_airport_longitude&gt;
+      &lt;end_city_name&gt;Chicago&lt;/end_city_name&gt;
+      &lt;marketing_airline&gt;Other&lt;/marketing_airline&gt;
+      &lt;marketing_flight_number&gt;1234&lt;/marketing_flight_number&gt;
+      &lt;alternate_flights_url&gt;/trip_item/flightSearch/id/19691175/airline_code/UA&lt;/alternate_flights_url&gt;
+    &lt;/Segment&gt;
+  &lt;/AirObject&gt;
+  &lt;WeatherObject&gt;
+    &lt;id&gt;19720471&lt;/id&gt;
+    &lt;trip_id&gt;2785341&lt;/trip_id&gt;
+    &lt;is_client_traveler&gt;true&lt;/is_client_traveler&gt;
+    &lt;relative_url&gt;/trip_item/show/id/19720471&lt;/relative_url&gt;
+    &lt;display_name&gt;Weather - Chicago, IL&lt;/display_name&gt;
+    &lt;date&gt;2009-11-23&lt;/date&gt;
+    &lt;location&gt;Chicago, IL&lt;/location&gt;
+    &lt;avg_high_temp_c&gt;8.8888888888889&lt;/avg_high_temp_c&gt;
+    &lt;avg_low_temp_c&gt;2.7777777777778&lt;/avg_low_temp_c&gt;
+    &lt;avg_wind_speed_kn&gt;13&lt;/avg_wind_speed_kn&gt;
+  &lt;/WeatherObject&gt;
+  &lt;Profile ref="VPNrwg9_2vW2j3DHX_pAzA"&gt;
+    &lt;is_client&gt;true&lt;/is_client&gt;
+    &lt;is_pro&gt;true&lt;/is_pro&gt;
+    &lt;screen_name&gt;denmark&lt;/screen_name&gt;
+    &lt;public_display_name&gt;Andy Denmark&lt;/public_display_name&gt;
+    &lt;profile_url&gt;people/denmark&lt;/profile_url&gt;
+    &lt;home_city&gt;San Francisco, CA&lt;/home_city&gt;
+    &lt;photo_url&gt;http://static.tripit.com/uploads/images/9/7/3/97319d8fb7045feb31172d9d7a6481f4608.jpg&lt;/photo_url&gt;
+    &lt;activity_feed_url&gt;http://www.tripit.com/feed/activities/private/24562ADE-7DF3452DABC4E7D7FF372C1ACC/activities.atom&lt;/activity_feed_url&gt;
+    &lt;alerts_feed_url&gt;http://www.tripit.com/feed/alerts/private/962356AA5-F101FC24E1C124532ACDE28C356AFB0/alerts.atom&lt;/alerts_feed_url&gt;
+    &lt;ical_url&gt;webcal://www.tripit.com/feed/ical/private/96333224-33BA6E42F4ABCDDEFG12347E5EDA66/tripit.ics&lt;/ical_url&gt;
+  &lt;/Profile&gt;
+&lt;/Response&gt;
+$</pre>
+    </p>
+
+    <h3>list</h3>
+    <p>
+      A <i>list</i> request is used to retrieve multiple objects given
+      an object type and set of filter parameters.  Since <i>list</i>
+      requests do not change data they are all made via an HTTP GET
+      request for a URL that takes the following form:
+    </p>
+    <p>
+      <pre>https://api.tripit.com/v1/list/&lt;object type&gt/&lt;filter parameter&gt;/&lt;filter value&gt;</pre>
+    </p>
+    <p>
+      &lt;object type&gt; is one of the following strings:
+      <ul>
+        <li>trip</li>
+        <li>object</li>
+        <li>points_program</li>
+      </ul>
+    </p>
+    <p>
+      Valid values for &lt;filter parameter&gt; and &lt;filter
+      value&gt; depend on the &lt;object type&gt;.  The following
+      table describes the valid combinations:
+    </p>
+    <table>
+      <tr>
+        <th>object type</th>
+        <th>filter parameter</th>
+        <th>filter value</th>
+        <th>default value</th>
+        <th>explanation</th>
+      </tr>
+      <tr>
+        <td>trip</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>Returns a list of upcoming trips on which the
+        authenticated user may or may not be a traveler.</td>
+      </tr>
+      <tr>
+        <td>trip</td>
+        <td>traveler</td>
+        <td>true|false|all</td>
+        <td>true</td>
+        <td>Conditionally returns trips on which the authenticated
+        user is (<b>true</b>) or is not (<b>false</b>) a traveler.  If
+        the value of this parameter is set to <b>all</b> then trips on
+        which the user is <i>and</i> is not a traveler are returned.
+        Whether or not the user created the trip or was invited to
+        view and/or collaborate on the trip has no bearing on whether
+        or not the user is determined to be a traveler on the
+        trip.</td>
+      </tr>
+      <tr>
+        <td>trip</td>
+        <td>past</td>
+        <td>true|false</td>
+        <td>false</td>
+        <td>Returns past trips if set to true.  Setting this to false
+        just mimics the default behavior.  A past trip is defined to
+        be any trip whose end_date is before today's date with respect
+        to the America/Los_Angeles timezone.  All other trips,
+        including un-dated ones, are defined to be future trips.</td>
+      </tr>
+      <tr>
+        <td>trip</td>
+        <td>modified_since</td>
+        <td>Integer value</td>
+        <td>-</td>
+        <td>Each Response object has a &lt;timestamp&gt; that may be
+        stored by a client.  If the client re-issues a request with
+        the <i>modified_since</i> parameter and the <i>timestamp</i>
+        from the prior invocation of the request only the trip objects
+        that have been updated and/or created since the first
+        invocation will be returned.  Note: deleted objects will not
+        be considered as a change when computing the list of objects
+        in the response. Therefore, a client should periodically sync
+        the entire object cache, avoiding the modified_since parameter.</td>
+      </tr>
+      <tr>
+        <td>trip</td>
+        <td>include_objects</td>
+        <td>true|false</td>
+        <td>false</td>
+        <td>If set to true then all of the trips that are included in
+        the &lt;Response&gt; will be accompanied by their associated
+        travel objects.  This is useful for clients that would
+        otherwise need to make multiple calls to obtain a list of
+        trips and then associated trip objects
+        (e.g. <b>air</b>, <b>car</b>, <b>lodging</b>, etc...).</td>
+      </tr>
+      <tr>
+        <td>object</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>Returns a list of all upcoming travel objects whether or
+        not they are associated with a trip.  Undated travel objects
+        are assumed to have dates that are very far out in the future
+        and therefore are also returned.  If the travel objects are
+        associated with a trip then they will only be returned if the
+        account making the query is listed as a traveler on the trip
+        or if the trip is shared with this account.</td>
+     </tr>
+      <tr>
+        <td>object</td>
+        <td>trip_id</td>
+        <td>The TripIt ID for a Trip object</td>
+        <td>-</td>
+
+        <td>Returns a list of all travel objects in the Trip object
+        specified.  If trip_id is specified then the <b>past</b> and
+        <b>traveler</b> filters are ignored.</td>
+      </tr>
+      <tr>
+        <td>object</td>
+        <td>past</td>
+        <td>true|false</td>
+        <td>false</td>
+        <td>Returns past travel objects if set to true.  Setting this
+        to false just mimics the default behavior.  A past travel
+        object is defined to be any object whose end_date is before
+        yesterday's date with respect to the America/Los_Angeles
+        timezone.  All other objects, including un-dated ones, are
+        defined to be future objects.</td>
+      </tr>
+      <tr>
+        <td>object</td>
+        <td>traveler</td>
+        <td>true|false|all</td>
+        <td>true</td>
+        <td>Conditionally returns travel objects associated with trips
+        on which the authenticated user is (<b>true</b>) or is not
+        (<b>false</b>) a traveler.  If the value of this parameter is
+        set to <b>all</b> then objects associated with trips on which
+        the user is <i>and</i> is not a traveler are returned.
+        Whether or not the user created the trip or was invited to
+        view and/or collaborate on the trip has no inherent bearing on
+        whether or not the user is determined to be a traveler on the
+        trip.  Travel objects that are not associated with a Trip
+        (i.e. Unfiled Items) are included in the result set when
+        traveler=false.</td>
+      </tr>
+      <tr>
+        <td>object</td>
+        <td>type</td>
+        <td>air|activity|car|cruise|<br />directions|lodging|map|note|<br />rail|restaurant|transport|weather</td>
+        <td>-</td>
+        <td>Filter based on travel object type.  The absence of this
+        parameter implies that all travel object types will be
+        returned.</td>
+      </tr>
+      <tr>
+        <td>object</td>
+        <td>modified_since</td>
+        <td>Integer value</td>
+        <td>-</td>
+        <td>Each Response object has a &lt;timestamp&gt; that may be
+        stored by a client.  If the client re-issues a request with
+        the <i>modified_since</i> parameter and the <i>timestamp</i>
+        from the prior invocation of the request only the travel
+        objects that have been updated and/or created since the first
+        invocation will be returned.  Note: deleted objects will not
+        be considered as a change when computing the list of objects
+        in the response. Therefore, a client should periodically sync
+        the entire object cache, avoiding the modified_since parameter.</td>
+      </tr>
+      <tr>
+        <td>points_program</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>For a TripIt Pro user account, lists all configured points
+          programs.</td>
+      </tr>
+   </table>
+    <h4>Example:</h4>
+    <p>
+      Here is a sample <i>list</i> request for a Trip object:
+    </p>
+    <pre>
+$ curl -k -D /dev/tty --user &lt;username&gt;:&lt;password&gt; https://api.tripit.com/v1/list/trip
+HTTP/1.1 200 OK
+Server: nginx/0.6.32
+Date: Wed, 03 Dec 2008 23:10:45 GMT
+Content-Type: text/xml; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Expires: Thu, 19 Nov 1981 08:52:00 GMT
+Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Pragma: no-cache
+
+&lt;Response&gt;
+  &lt;Trip&gt;
+    &lt;id&gt;770827&lt;/id&gt;
+    &lt;start_date&gt;2008-12-17&lt;/start_date&gt;
+    &lt;end_date&gt;2008-12-27&lt;/end_date&gt;
+    &lt;display_name&gt;New York, NY, December 2008&lt;/display_name&gt;
+    &lt;image_url&gt;/images/places/general.jpg&lt;/image_url&gt;
+    &lt;is_private&gt;false&lt;/is_private&gt;
+    &lt;is_traveler&gt;true&lt;/is_traveler&gt;
+    &lt;primary_location&gt;New York, NY&lt;/primary_location&gt;
+    &lt;PrimaryLocationAddress&gt;
+        &lt;address&gt;New York, NY&lt;/address&gt;
+        &lt;city&gt;New York&lt;/city&gt;
+        &lt;state&gt;NY&lt;/state&gt;
+        &lt;country&gt;US&lt;/country&gt;
+        &lt;latitude&gt;40.714269&lt;/latitude&gt;
+        &lt;longitude&gt;-74.005973&lt;/longitude&gt;
+    &lt;/PrimaryLocationAddress&gt;
+  &lt;/Trip&gt;
+  &lt;Trip&gt;
+    &lt;id&gt;770828&lt;/id&gt;
+    &lt;start_date&gt;2009-01-17&lt;/start_date&gt;
+    &lt;end_date&gt;2009-01-27&lt;/end_date&gt;
+    &lt;display_name&gt;Paris, France, January 2009&lt;/display_name&gt;
+    &lt;image_url&gt;/images/places/general.jpg&lt;/image_url&gt;
+    &lt;is_private&gt;false&lt;/is_private&gt;
+    &lt;is_traveler&gt;true&lt;/is_traveler&gt;
+    &lt;primary_location&gt;Paris, France&lt;/primary_location&gt;
+    &lt;PrimaryLocationAddress&gt;
+        &lt;address&gt;Paris, France&lt;/address&gt;
+        &lt;city&gt;Paris&lt;/city&gt;
+        &lt;state&gt;&#xCE;le-de-france&lt;/state&gt;
+        &lt;country&gt;FR&lt;/country&gt;
+        &lt;latitude&gt;48.866667&lt;/latitude&gt;
+        &lt;longitude&gt;2.333333&lt;/longitude&gt;
+    &lt;/PrimaryLocationAddress&gt;
+  &lt;/Trip&gt;
+&lt;/Response&gt;
+</pre>
+    <p>
+      Another example in which we're requesting all objects within
+      Trip #115 that are of type <b>air</b>.
+    </p>
+    <pre>
+$ curl -k -D /dev/tty --user &lt;username&gt;:&lt;password&gt; https://api.tripit.com/v1/list/object/trip_id/115/type/air
+HTTP/1.1 200 OK
+Server: nginx/0.6.35
+Date: Thu, 07 May 2009 22:00:08 GMT
+Content-Type: text/xml; charset=utf-8
+Transfer-Encoding: chunked
+Connection: close
+Cache-Control: private
+
+&lt;Response&gt;
+  &lt;timestamp&gt;1241733608&lt;/timestamp&gt;
+  &lt;AirObject&gt;
+  &lt;id&gt;319&lt;/id&gt;
+  &lt;trip_id&gt;115&lt;/trip_id&gt;
+  &lt;is_traveler&gt;true&lt;/is_traveler&gt;
+  &lt;relative_url&gt;/reservation/show/id/319&lt;/relative_url&gt;
+  &lt;display_name&gt;Your Flight&lt;/display_name&gt;
+  &lt;is_purchased&gt;true&lt;/is_purchased&gt;
+  &lt;Segment&gt;
+    &lt;StartDateTime&gt;
+      &lt;date&gt;2009-05-27&lt;/date&gt;
+      &lt;time&gt;06:15:00&lt;/time&gt;
+      &lt;timezone&gt;America/Los_Angeles&lt;/timezone&gt;
+      &lt;utc_offset&gt;-07:00&lt;/utc_offset&gt;
+    &lt;/StartDateTime&gt;
+    &lt;EndDateTime&gt;
+      &lt;date&gt;2009-05-27&lt;/date&gt;
+      &lt;time&gt;08:20:00&lt;/time&gt;
+      &lt;timezone&gt;America/Los_Angeles&lt;/timezone&gt;
+      &lt;utc_offset&gt;-07:00&lt;/utc_offset&gt;
+    &lt;/EndDateTime&gt;
+    &lt;start_airport_code&gt;SFO&lt;/start_airport_code&gt;
+    &lt;start_city_name&gt;San Francisco&lt;/start_city_name&gt;
+    &lt;end_airport_code&gt;SEA&lt;/end_airport_code&gt;
+    &lt;end_city_name&gt;Seattle&lt;/end_city_name&gt;
+    &lt;marketing_airline&gt;United Airlines&lt;/marketing_airline&gt;
+    &lt;marketing_airline_code&gt;UA&lt;/marketing_airline_code&gt;
+    &lt;marketing_flight_number&gt;24&lt;/marketing_flight_number&gt;
+    &lt;aircraft&gt;319&lt;/aircraft&gt;
+    &lt;distance&gt;677 miles&lt;/distance&gt;
+    &lt;duration&gt;2h, 05m&lt;/duration&gt;
+    &lt;stops&gt;nonstop&lt;/stops&gt;
+  &lt;/Segment&gt;
+&lt;/AirObject&gt;
+&lt;/Response&gt;
+</pre>
+    <h3>create</h3>
+    <p>
+      A <i>create</i> request is used to create new objects.  To
+      create objects, make an HTTP POST request to the following URL:
+    </p>
+    <p>
+      <pre>https://api.tripit.com/v1/create</pre>
+    </p>
+    <p>
+      The client must POST a
+      single <a href="#request_response_section">Request object</a> as
+      the value of the request parameter <i>xml</i> in the POST body of the request.
+    </p>
+    <h4>Example:</h4>
+    <p>
+      Here is a sample <i>create</i> request for a Trip object:
+    </p>
+    <p>
+      Here is what the post data would look like for a Trip creation:
+      <pre>
+$ cat /var/tmp/trip.xml 
+&lt;Request&gt;
+  &lt;Trip&gt;
+    &lt;start_date&gt;2008-12-09&lt;/start_date&gt;
+    &lt;end_date&gt;2008-12-27&lt;/end_date&gt;
+    &lt;primary_location&gt;New York, NY&lt;/primary_location&gt;
+    &lt;PrimaryLocationAddress&gt;
+        &lt;address&gt;New York, NY&lt;/address&gt;
+        &lt;city&gt;New York&lt;/city&gt;
+        &lt;state&gt;NY&lt;/state&gt;
+        &lt;country&gt;US&lt;/country&gt;
+        &lt;latitude&gt;40.714269&lt;/latitude&gt;
+        &lt;longitude&gt;-74.005973&lt;/longitude&gt;
+    &lt;/PrimaryLocationAddress&gt;
+  &lt;/Trip&gt;
+&lt;/Request&gt;
+</pre>
+    </p>
+    <p>
+      Here is the equivalent request body if you were to send this in JSON (Note: the lack of the Request wrapper):
+    </p>
+    <p>
+      <pre>
+{"Trip":
+   {"start_date":"2009-12-09",
+    "end_date":"2009-12-27",
+    "primary_location":"New York, NY"
+   }
+}</pre>
+    </p>
+    <p>
+      Here is a sample <i>create</i> request for a Trip object:
+      
+      <pre>
+$ curl -k -D /dev/tty --data-urlencode xml@/var/tmp/trip.xml --user &lt;username&gt;:&lt;password&gt; https://api.tripit.com/v1/create
+HTTP/1.1 200 OK
+Server: nginx/0.6.32
+Date: Fri, 05 Dec 2008 22:12:35 GMT
+Content-Type: text/xml; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Expires: Thu, 19 Nov 1981 08:52:00 GMT
+Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Pragma: no-cache
+
+&lt;Response&gt;
+  &lt;Trip&gt;
+    &lt;id&gt;770846&lt;/id&gt;
+    &lt;start_date&gt;2008-12-09&lt;/start_date&gt;
+    &lt;end_date&gt;2008-12-27&lt;/end_date&gt;
+    &lt;display_name&gt;New York, NY, December 2008&lt;/display_name&gt;
+    &lt;image_url&gt;/images/places/general.jpg&lt;/image_url&gt;
+    &lt;is_private&gt;false&lt;/is_private&gt;
+    &lt;is_traveler&gt;true&lt;/is_traveler&gt;
+    &lt;primary_location&gt;New York, NY&lt;/primary_location&gt;
+    &lt;PrimaryLocationAddress&gt;
+        &lt;address&gt;New York, NY&lt;/address&gt;
+        &lt;city&gt;New York&lt;/city&gt;
+        &lt;state&gt;NY&lt;/state&gt;
+        &lt;country&gt;US&lt;/country&gt;
+        &lt;latitude&gt;40.714269&lt;/latitude&gt;
+        &lt;longitude&gt;-74.005973&lt;/longitude&gt;
+    &lt;/PrimaryLocationAddress&gt;
+  &lt;/Trip&gt;
+&lt;/Response&gt;
+</pre>
+    </p>
+
+    <p>
+      Here is a sample <i>create</i> request for a Air object:
+    </p>
+    <p>
+      Here is what the post data would look like for a Air object creation:
+      <pre>
+$ cat /var/tmp/air.xml 
+&lt;Request&gt;
+  &lt;AirObject&gt;
+    &lt;is_client_traveler&gt;true&lt;/is_client_traveler&gt;
+    &lt;booking_site_name&gt;United Airlines&lt;/booking_site_name&gt;
+    &lt;booking_site_phone&gt;1-800-United-1&lt;/booking_site_phone&gt;
+    &lt;booking_site_url&gt;http://www.united.com/&lt;/booking_site_url&gt;
+    &lt;supplier_conf_num&gt;ABC123&lt;/supplier_conf_num&gt;
+    &lt;Segment&gt;
+      &lt;StartDateTime&gt;
+      &lt;date&gt;2009-09-04&lt;/date&gt;
+      &lt;time&gt;15:04:00&lt;/time&gt;
+    &lt;/StartDateTime&gt;
+    &lt;EndDateTime&gt;
+      &lt;date&gt;2009-09-04&lt;/date&gt;
+      &lt;time&gt;17:47:00&lt;/time&gt;
+    &lt;/EndDateTime&gt;
+    &lt;start_city_name&gt;Chicago&lt;/start_city_name&gt;
+    &lt;end_city_name&gt;San Francisco&lt;/end_city_name&gt;
+    &lt;marketing_airline&gt;UA&lt;/marketing_airline&gt;
+    &lt;marketing_flight_number&gt;137&lt;/marketing_flight_number&gt;
+    &lt;seats&gt;23J&lt;/seats&gt;
+  &lt;/Segment&gt;
+  &lt;Segment&gt;
+    &lt;StartDateTime&gt;
+      &lt;date&gt;2009-09-08&lt;/date&gt;
+      &lt;time&gt;16:32:00&lt;/time&gt;
+    &lt;/StartDateTime&gt;
+    &lt;EndDateTime&gt;
+      &lt;date&gt;2009-09-08&lt;/date&gt;
+      &lt;time&gt;22:42:00&lt;/time&gt;
+    &lt;/EndDateTime&gt;
+    &lt;start_city_name&gt;San Francisco&lt;/start_city_name&gt;
+    &lt;end_city_name&gt;Chicago&lt;/end_city_name&gt;
+    &lt;marketing_airline&gt;UA&lt;/marketing_airline&gt;
+    &lt;marketing_flight_number&gt;39&lt;/marketing_flight_number&gt;
+    &lt;seats&gt;19B&lt;/seats&gt;
+  &lt;/Segment&gt;
+  &lt;Traveler&gt;
+    &lt;first_name&gt;John&lt;/first_name&gt;
+    &lt;last_name&gt;Doe&lt;/last_name&gt;
+    &lt;frequent_traveler_num&gt;1234567890&lt;/frequent_traveler_num&gt;
+  &lt;/Traveler&gt;
+&lt;/AirObject&gt;
+&lt;/Request&gt;
+</pre>
+    </p>
+    <p>
+      Here is a sample <i>create</i> request for a Air object:
+
+      <pre>
+$ curl -k -D /dev/tty --data-urlencode xml@/var/tmp/air.xml --user &lt;username&gt;:&lt;password&gt; https://api.tripit.com/v1/create
+HTTP/1.1 100 Continue
+
+HTTP/1.1 200 OK
+Server: nginx
+Date: Mon, 31 Aug 2009 23:51:39 GMT
+Content-Type: text/xml; charset=utf-8
+Transfer-Encoding: chunked
+Connection: close
+Cache-Control: private
+
+&lt;Response&gt;
+  &lt;timestamp&gt;1251762699&lt;/timestamp&gt;
+  &lt;num_bytes&gt;2470&lt;/num_bytes&gt;
+  &lt;AirObject&gt;
+    &lt;id&gt;1413&lt;/id&gt;
+    &lt;trip_id&gt;426&lt;/trip_id&gt;
+    &lt;is_client_traveler&gt;true&lt;/is_client_traveler&gt;
+    &lt;relative_url&gt;/reservation/show/id/1413&lt;/relative_url&gt;
+    &lt;display_name&gt;Your Flight&lt;/display_name&gt;
+    &lt;booking_site_name&gt;United Airlines&lt;/booking_site_name&gt;
+    &lt;booking_site_phone&gt;1-800-United-1&lt;/booking_site_phone&gt;
+    &lt;booking_site_url&gt;http://www.united.com/&lt;/booking_site_url&gt;
+    &lt;supplier_conf_num&gt;ABC123&lt;/supplier_conf_num&gt;
+    &lt;is_purchased&gt;true&lt;/is_purchased&gt;
+    &lt;Segment&gt;
+      &lt;Status&gt;
+        &lt;flight_status&gt;200&lt;/flight_status&gt;
+        &lt;last_modified&gt;1251762699&lt;/last_modified&gt;
+      &lt;/Status&gt;
+      &lt;StartDateTime&gt;
+        &lt;date&gt;2009-09-04&lt;/date&gt;
+        &lt;time&gt;15:04:00&lt;/time&gt;
+        &lt;timezone&gt;America/Chicago&lt;/timezone&gt;
+        &lt;utc_offset&gt;-05:00&lt;/utc_offset&gt;
+      &lt;/StartDateTime&gt;
+      &lt;EndDateTime&gt;
+        &lt;date&gt;2009-09-04&lt;/date&gt;
+        &lt;time&gt;17:47:00&lt;/time&gt;
+        &lt;timezone&gt;America/Los_Angeles&lt;/timezone&gt;
+        &lt;utc_offset&gt;-07:00&lt;/utc_offset&gt;
+      &lt;/EndDateTime&gt;
+      &lt;start_airport_code&gt;ORD&lt;/start_airport_code&gt;
+      &lt;start_city_name&gt;Chicago&lt;/start_city_name&gt;
+      &lt;end_airport_code&gt;SFO&lt;/end_airport_code&gt;
+      &lt;end_city_name&gt;San Francisco&lt;/end_city_name&gt;
+      &lt;marketing_airline&gt;United Airlines&lt;/marketing_airline&gt;
+      &lt;marketing_airline_code&gt;UA&lt;/marketing_airline_code&gt;
+      &lt;marketing_flight_number&gt;137&lt;/marketing_flight_number&gt;
+      &lt;aircraft&gt;763&lt;/aircraft&gt;
+      &lt;aircraft_display_name&gt;Boeing 767-300&lt;/aircraft_display_name&gt;
+      &lt;distance&gt;1841 miles&lt;/distance&gt;
+      &lt;duration&gt;4h, 43m&lt;/duration&gt;
+      &lt;seats&gt;23J&lt;/seats&gt;
+      &lt;stops&gt;nonstop&lt;/stops&gt;
+    &lt;/Segment&gt;
+    &lt;Segment&gt;
+      &lt;Status&gt;
+        &lt;flight_status&gt;200&lt;/flight_status&gt;
+        &lt;last_modified&gt;1251762699&lt;/last_modified&gt;
+      &lt;/Status&gt;
+      &lt;StartDateTime&gt;
+        &lt;date&gt;2009-09-08&lt;/date&gt;
+        &lt;time&gt;16:32:00&lt;/time&gt;
+        &lt;timezone&gt;America/Los_Angeles&lt;/timezone&gt;
+        &lt;utc_offset&gt;-07:00&lt;/utc_offset&gt;
+      &lt;/StartDateTime&gt;
+      &lt;EndDateTime&gt;
+        &lt;date&gt;2009-09-08&lt;/date&gt;
+        &lt;time&gt;22:42:00&lt;/time&gt;
+        &lt;timezone&gt;America/Chicago&lt;/timezone&gt;
+        &lt;utc_offset&gt;-05:00&lt;/utc_offset&gt;
+      &lt;/EndDateTime&gt;
+      &lt;start_airport_code&gt;SFO&lt;/start_airport_code&gt;
+      &lt;start_city_name&gt;San Francisco&lt;/start_city_name&gt;
+      &lt;end_airport_code&gt;ORD&lt;/end_airport_code&gt;
+      &lt;end_city_name&gt;Chicago&lt;/end_city_name&gt;
+      &lt;marketing_airline&gt;United Airlines&lt;/marketing_airline&gt;
+      &lt;marketing_airline_code&gt;UA&lt;/marketing_airline_code&gt;
+      &lt;marketing_flight_number&gt;39&lt;/marketing_flight_number&gt;
+      &lt;aircraft&gt;319&lt;/aircraft&gt;
+      &lt;aircraft_display_name&gt;Airbus A319&lt;/aircraft_display_name&gt;
+      &lt;distance&gt;1841 miles&lt;/distance&gt;
+      &lt;duration&gt;4h, 10m&lt;/duration&gt;
+      &lt;seats&gt;19B&lt;/seats&gt;
+      &lt;stops&gt;nonstop&lt;/stops&gt;
+    &lt;/Segment&gt;
+    &lt;Traveler&gt;
+      &lt;first_name&gt;John&lt;/first_name&gt;
+      &lt;last_name&gt;Doe&lt;/last_name&gt;
+      &lt;frequent_traveler_num&gt;1234567890&lt;/frequent_traveler_num&gt;
+    &lt;/Traveler&gt;
+  &lt;/AirObject&gt;
+&lt;/Response&gt;
+$</pre>
+    </p>
+    <p>
+      Note the following about the response objects:
+      <ul>
+        <li>The &lt;Segment&gt; objects have considerably more information in them as the TripIt platform "enriches" the &lt;Segment&gt; objects (e.g. &lt;distance&gt;, &lt;aircraft&gt;, etc...).</li>
+        <li>The TripIt user this call was executed on behalf of has a TripIt pro account and so the &lt;Segment&gt; objects now have &lt;Status&gt; objects that indicate the current status of this flight.</li>
+        <li>All the DateTime objects now have &lt;timezone&gt; and &lt;utc_offset&gt; as the TripIt platform was able to figure that out.</li>
+      </ul>
+    </p>
+    <h3>replace</h3>
+    <p>
+      A <i>replace</i> request is used to replace existing objects in
+      a TripIt account.  After the object is replaced it will get the
+      same object id as the one the object had before the replace
+      call.  To replace an object make an HTTP POST request to the
+      following URL:
+    </p>
+    <p>
+      <pre>https://api.tripit.com/v1/replace/&lt;object type&gt;/id/&lt;TripIt Object ID&gt;</pre>
+    </p>
+    <p>
+      &lt;object type&gt; is one of the following strings:
+      <ul>
+        <li>air</li>
+        <li>activity</li>
+        <li>car</li>
+        <li>cruise</li>
+        <li>directions</li>
+        <li>lodging</li>
+        <li>map</li>
+        <li>note</li>
+        <li>rail</li>
+        <li>restaurant</li>
+        <li>transport</li>
+        <li>trip</li>
+      </ul>
+    </p>
+    <p>
+      &lt;TripIt Object ID&gt; is the object ID of the TripIt object being requested.
+    </p>
+    <h4>Example:</h4>
+    <p>
+      Here is a sample <i>replace</i> request for a Trip object:
+    </p>
+    <p>
+      The following example shows XML for a trip creation followed by
+      a replace call on that trip to extend the dates of the trip.
+      The first step is to create a new trip.  Here is the post data
+      for the creation of a private Trip object:
+<pre>
+$ cat /var/tmp/create_trip.xml
+&lt;Request&gt;
+  &lt;Trip&gt;
+    &lt;start_date&gt;2010-09-07&lt;/start_date&gt;
+    &lt;end_date&gt;2010-09-18&lt;/end_date&gt;
+    &lt;is_private&gt;true&lt;/is_private&gt;
+    &lt;primary_location&gt;Rome, Italy&lt;/primary_location&gt;
+  &lt;/Trip&gt;
+&lt;/Request&gt;
+</pre>
+    </p>
+    <p>
+      Here is the &lt;Response&gt; object the API returns when you
+      create this Trip object:
+      <pre>
+&lt;Response&gt;
+  &lt;timestamp&gt;1278433489&lt;/timestamp&gt;
+  &lt;num_bytes&gt;1339&lt;/num_bytes&gt;
+  &lt;Trip&gt;
+    &lt;TripInvitees&gt;
+      &lt;Invitee profile_ref="VPdqwr9_2vA2j3dla_pfz9"&gt;
+        &lt;is_read_only&gt;false&lt;/is_read_only&gt;
+        &lt;is_traveler&gt;true&lt;/is_traveler&gt;
+      &lt;/Invitee&gt;
+    &lt;/TripInvitees&gt;
+    &lt;id&gt;7501715&lt;/id&gt;
+    &lt;relative_url&gt;/trip/show/id/7501715&lt;/relative_url&gt;
+    &lt;start_date&gt;2010-09-07&lt;/start_date&gt;
+    &lt;end_date&gt;2010-09-18&lt;/end_date&gt;
+    &lt;display_name&gt;Rome, Italy, September 2010&lt;/display_name&gt;
+    &lt;image_url&gt;http://www.tripit.com/images/places/general.jpg&lt;/image_url&gt;
+    &lt;is_private&gt;true&lt;/is_private&gt;
+    &lt;primary_location&gt;Rome, Italy&lt;/primary_location&gt;
+    &lt;PrimaryLocationAddress&gt;
+        &lt;address&gt;Rome, Italy&lt;/address&gt;
+        &lt;city&gt;Rome&lt;/city&gt;
+        &lt;state&gt;Latium&lt;/state&gt;
+        &lt;country&gt;IT&lt;/country&gt;
+        &lt;latitude&gt;41.9&lt;/latitude&gt;
+        &lt;longitude&gt;12.483333&lt;/longitude&gt;
+    &lt;/PrimaryLocationAddress&gt;
+  &lt;/Trip&gt;
+  &lt;Profile ref="VParwr9_2vA2j3dla_pfz9"&gt;
+    &lt;is_client&gt;true&lt;/is_client&gt;
+    &lt;is_pro&gt;true&lt;/is_pro&gt;
+    &lt;screen_name&gt;denmark&lt;/screen_name&gt;
+    &lt;public_display_name&gt;Andy Denmark&lt;/public_display_name&gt;
+    &lt;profile_url&gt;people/denmark&lt;/profile_url&gt;
+    &lt;home_city&gt;San Francisco, CA&lt;/home_city&gt;
+    &lt;photo_url&gt;https://www.tripit.com/uploads/images/8/7/2/92dadd8fb7f23455feb38212d9decdf81f4608.jpg&lt;/photo_url&gt;
+    &lt;activity_feed_url&gt;http://www.tripit.com/feed/activities/private/12883BD53-7D9ABDE235538A82F248234532ABDC1ACC/activities.aactivity_feed_url&gt;
+    &lt;alerts_feed_url&gt;http://www.tripit.com/feed/alerts/private/9123AABD-F192224ABEFD24E1C2098230985A92ABEF234C356AFB0/alerts.aalerts_feed_url&gt;
+    &lt;ical_url&gt;webcal://www.tripit.com/feed/ical/private/9237C55-33ABDEC145454ABCED2ABDE343477EE42ED12147E5EDA66/tripit.ics&lt;l&gt;
+  &lt;/Profile&gt;
+&lt;/Response&gt;
+</pre>
+    </p>
+    <p>
+      Now, if we want to update the &lt;end_date&gt; on this Trip
+      object the post data for the replace method would look something
+      like this:
+      <pre>
+$ cat /var/tmp/trip_replace.xml
+&lt;Request&gt;
+  &lt;Trip&gt;
+    &lt;start_date&gt;2010-09-07&lt;/start_date&gt;
+    &lt;end_date&gt;2010-10-18&lt;/end_date&gt;
+    &lt;is_private&gt;true&lt;/is_private&gt;
+    &lt;primary_location&gt;Rome, Italy&lt;/primary_location&gt;
+  &lt;/Trip&gt;
+&lt;/Request&gt;
+</pre>
+      Notice that the post data contains the data from the
+      original <i>create</i> call that is not changing along with the
+      new <i>end_date</i>.  This is important because the replace
+      method will be deleting the old Trip object and creating a new
+      one in place of the old one.  If for example the post data on
+      the replace call didn't
+      specify <i>&lt;is_private&gt;true&lt;/is_private&gt;</i> then
+      the Trip object would no longer be private.
+    </p>
+    <p>
+      Here is a sample <i>replace</i> request for a Trip object:
+      <pre>
+$ curl -k -D /dev/tty --data-urlencode xml@/var/tmp/trip_replace.xml --user &lt;username&gt;:&lt;password&gt; https://api.tripit.com/v1/replace/trip/id/7501715
+HTTP/1.1 100 Continue
+
+HTTP/1.1 200 OK
+Server: nginx
+Date: Tue, 6 Jul 2009 23:51:39 GMT
+Content-Type: text/xml; charset=utf-8
+Transfer-Encoding: chunked
+Connection: close
+Cache-Control: private
+
+&lt;Response&gt;
+  &lt;timestamp&gt;1278433576&lt;/timestamp&gt;
+  &lt;num_bytes&gt;1339&lt;/num_bytes&gt;
+  &lt;Trip&gt;
+    &lt;TripInvitees&gt;
+      &lt;Invitee profile_ref="VParwr9_2vA2j3dla_pfz9"&gt;
+        &lt;is_read_only&gt;false&lt;/is_read_only&gt;
+        &lt;is_traveler&gt;true&lt;/is_traveler&gt;
+      &lt;/Invitee&gt;
+    &lt;/TripInvitees&gt;
+    &lt;id&gt;7501715&lt;/id&gt;
+    &lt;relative_url&gt;/trip/show/id/7501771&lt;/relative_url&gt;
+    &lt;start_date&gt;2010-09-07&lt;/start_date&gt;
+    &lt;end_date&gt;2010-10-18&lt;/end_date&gt;
+    &lt;display_name&gt;Rome, Italy, September 2010&lt;/display_name&gt;
+    &lt;image_url&gt;http://www.tripit.com/images/places/general.jpg&lt;/image_url&gt;
+    &lt;is_private&gt;true&lt;/is_private&gt;
+    &lt;primary_location&gt;Rome, Italy&lt;/primary_location&gt;
+    &lt;PrimaryLocationAddress&gt;
+        &lt;address&gt;Rome, Italy&lt;/address&gt;
+        &lt;city&gt;Rome&lt;/city&gt;
+        &lt;state&gt;Latium&lt;/state&gt;
+        &lt;country&gt;IT&lt;/country&gt;
+        &lt;latitude&gt;41.9&lt;/latitude&gt;
+        &lt;longitude&gt;12.483333&lt;/longitude&gt;
+    &lt;/PrimaryLocationAddress&gt;
+  &lt;/Trip&gt;
+  &lt;Profile ref="VParwr9_2vA2j3dla_pfz9"&gt;
+    &lt;is_client&gt;true&lt;/is_client&gt;
+    &lt;is_pro&gt;true&lt;/is_pro&gt;
+    &lt;screen_name&gt;denmark&lt;/screen_name&gt;
+    &lt;public_display_name&gt;Andy Denmark&lt;/public_display_name&gt;
+    &lt;profile_url&gt;people/denmark&lt;/profile_url&gt;
+    &lt;home_city&gt;San Francisco, CA&lt;/home_city&gt;
+    &lt;photo_url&gt;https://www.tripit.com/uploads/images/8/7/2/92dadd8fb7045feb38212d9decdf81f4608.jpg&lt;/photo_url&gt;
+    &lt;activity_feed_url&gt;http://www.tripit.com/feed/activities/private/12DA7D53-7D9ABDE4BF8A82F248234532ABDC1ACC/activities.atomivity_feed_url&gt;
+    &lt;alerts_feed_url&gt;http://www.tripit.com/feed/alerts/private/91237ABD-F192224ABEFD24E1C24CC75A92ABEF234C356AFB0/alerts.atom&ts_feed_url&gt;
+    &lt;ical_url&gt;webcal://www.tripit.com/feed/ical/private/91927C55-33ABDEC145454ABCED2F47377EE42ED12147E5EDA66/tripit.ics&lt;/ict;
+  &lt;/Profile&gt;
+&lt;/Response&gt;
+</pre>
+    </p>
+    <p>
+      Here's another example of how the replace method can be used but
+      this time for a NoteObject.  Here's the XML used to create the
+      NoteObject:
+      <pre>
+$ cat /var/tmp/note.xml
+&lt;Request&gt;
+  &lt;NoteObject&gt;
+    &lt;display_name&gt;A Test Note&lt;/display_name&gt;
+    &lt;DateTime&gt;
+      &lt;date&gt;2010-12-09&lt;/date&gt;
+      &lt;time&gt;14:00:00&lt;/time&gt;
+    &lt;/DateTime&gt;
+    &lt;Address&gt;
+      &lt;addr1&gt;500 Treat Avenue&lt;/addr1&gt;
+      &lt;city&gt;San Francisco&lt;/city&gt;
+      &lt;state&gt;CA&lt;/state&gt;
+      &lt;zip&gt;94110&lt;/zip&gt;
+      &lt;country&gt;US&lt;/country&gt;
+    &lt;/Address&gt;
+    &lt;text&gt;Test note.&lt;/text&gt;
+    &lt;url&gt;http://www.tripit.com/&lt;/url&gt;
+  &lt;/NoteObject&gt;
+&lt;/Request&gt;
+</pre>
+    </p>
+    <p>
+      Here's how you create the NoteObject:
+      <pre>
+$ curl -D /dev/tty --user &lt;username&gt;:&lt;password&gt; --data-urlencode xml@/var/tmp/note.xml https://api.tripit.com/v1/create
+HTTP/1.1 200 OK
+Server: nginx
+Date: Thu, 29 Jul 2010 21:19:57 GMT
+Content-Type: text/xml; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Cache-Control: private
+
+&lt;Response&gt;
+  &lt;timestamp&gt;1280438397&lt;/timestamp&gt;
+  &lt;num_bytes&gt;738&lt;/num_bytes&gt;
+  &lt;NoteObject&gt;
+    &lt;id&gt;68872927&lt;/id&gt;
+    &lt;trip_id&gt;3024907&lt;/trip_id&gt;
+    &lt;is_client_traveler&gt;false&lt;/is_client_traveler&gt;
+    &lt;relative_url&gt;/trip_item/show/id/68872927&lt;/relative_url&gt;
+    &lt;display_name&gt;A Test Note&lt;/display_name&gt;
+    &lt;DateTime&gt;
+      &lt;date&gt;2010-12-09&lt;/date&gt;
+      &lt;time&gt;14:00:00&lt;/time&gt;
+      &lt;timezone&gt;America/Los_Angeles&lt;/timezone&gt;
+      &lt;utc_offset&gt;-08:00&lt;/utc_offset&gt;
+    &lt;/DateTime&gt;
+    &lt;Address&gt;
+      &lt;address&gt;500 Treat Avenue, San Francisco, CA, 94110&lt;/address&gt;
+      &lt;addr1&gt;500 Treat Avenue&lt;/addr1&gt;
+      &lt;city&gt;San Francisco&lt;/city&gt;
+      &lt;state&gt;CA&lt;/state&gt;
+      &lt;zip&gt;94110&lt;/zip&gt;
+      &lt;country&gt;US&lt;/country&gt;
+      &lt;latitude&gt;37.762161&lt;/latitude&gt;
+      &lt;longitude&gt;-122.413927&lt;/longitude&gt;
+    &lt;/Address&gt;
+    &lt;text&gt;Test note.&lt;/text&gt;
+    &lt;url&gt;http://www.tripit.com/&lt;/url&gt;
+  &lt;/NoteObject&gt;
+&lt;/Response&gt;
+</pre>
+    </p>
+    <p>
+      In order to replace the NoteObject with one that has updated
+      data you would post the following to the API as follows:
+      <pre>
+$ cat /var/tmp/replace_note.xml
+&lt;Request&gt;
+  &lt;NoteObject&gt;
+    &lt;display_name&gt;A Test Note, updated&lt;/display_name&gt;
+    &lt;DateTime&gt;
+      &lt;date&gt;2010-12-10&lt;/date&gt;
+      &lt;time&gt;14:00:00&lt;/time&gt;
+    &lt;/DateTime&gt;
+    &lt;Address&gt;
+      &lt;addr1&gt;500 Treat Avenue&lt;/addr1&gt;
+      &lt;city&gt;San Francisco&lt;/city&gt;
+      &lt;state&gt;CA&lt;/state&gt;
+      &lt;zip&gt;94110&lt;/zip&gt;
+      &lt;country&gt;US&lt;/country&gt;
+    &lt;/Address&gt;
+    &lt;text&gt;Here's my test note with an updated bit of text.&lt;/text&gt;
+    &lt;url&gt;http://www.tripit.com/&lt;/url&gt;
+  &lt;/NoteObject&gt;
+&lt;/Request&gt;
+$ curl -D /dev/tty --user &lt;username&gt;:&lt;password&gt; --data-urlencode xml@/var/tmp/replace_note.xml https://api.tripit.com/v1/replace/note/id/68872927
+HTTP/1.1 200 OK
+Server: nginx
+Date: Thu, 29 Jul 2010 21:28:03 GMT
+Content-Type: text/xml; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Cache-Control: private
+
+&lt;Response&gt;
+  &lt;timestamp&gt;1280438882&lt;/timestamp&gt;
+    &lt;num_bytes&gt;785&lt;/num_bytes&gt;
+    &lt;NoteObject&gt;
+      &lt;id&gt;68872927&lt;/id&gt;
+      &lt;trip_id&gt;3024907&lt;/trip_id&gt;
+      &lt;is_client_traveler&gt;false&lt;/is_client_traveler&gt;
+      &lt;relative_url&gt;/trip_item/show/id/68872927&lt;/relative_url&gt;
+      &lt;display_name&gt;A Test Note, updated&lt;/display_name&gt;
+      &lt;DateTime&gt;
+        &lt;date&gt;2010-12-10&lt;/date&gt;
+        &lt;time&gt;14:00:00&lt;/time&gt;
+        &lt;timezone&gt;America/Los_Angeles&lt;/timezone&gt;
+        &lt;utc_offset&gt;-08:00&lt;/utc_offset&gt;
+      &lt;/DateTime&gt;
+      &lt;Address&gt;
+        &lt;address&gt;500 Treat Avenue, San Francisco, CA, 94110&lt;/address&gt;
+        &lt;addr1&gt;500 Treat Avenue&lt;/addr1&gt;
+        &lt;city&gt;San Francisco&lt;/city&gt;
+        &lt;state&gt;CA&lt;/state&gt;
+        &lt;zip&gt;94110&lt;/zip&gt;
+        &lt;country&gt;US&lt;/country&gt;
+        &lt;latitude&gt;37.762161&lt;/latitude&gt;
+        &lt;longitude&gt;-122.413927&lt;/longitude&gt;
+      &lt;/Address&gt;
+      &lt;text&gt;Here's my test note with an updated bit of text.&lt;/text&gt;
+      &lt;url&gt;http://www.tripit.com/&lt;/url&gt;
+    &lt;/NoteObject&gt;
+  &lt;/Response&gt;
+</pre>
+    </p>
+    <h3>delete</h3>
+    <p>
+      A <i>delete</i> request is used to delete existing objects.  To
+      delete an object, make an HTTP GET request to the following URL:
+    </p>
+    <p>
+      <pre>https://api.tripit.com/v1/delete/&lt;object type&gt;/id/&lt;TripIt Object ID&gt;</pre>
+    </p>
+    <p>
+      &lt;object type&gt; is one of the following strings:
+      <ul>
+        <li>air</li>
+        <li>activity</li>
+        <li>car</li>
+        <li>cruise</li>
+        <li>directions</li>
+        <li>lodging</li>
+        <li>map</li>
+        <li>note</li>
+        <li>rail</li>
+        <li>restaurant</li>
+        <li>transport</li>
+        <li>trip</li>
+      </ul>
+    </p>
+    <p>
+      &lt;TripIt Object ID&gt; is the object ID of the TripIt object being requested.
+    </p>
+    <h4>Example:</h4>
+    <p>
+      Here is a sample <i>delete</i> request for a Trip object:
+    </p>
+    <p>
+<pre>
+$ curl -k -D /dev/tty --user &lt;username&gt;:&lt;password&gt; https://api.tripit.com/v1/delete/trip/id/770829
+HTTP/1.1 200 OK
+Server: nginx/0.6.32
+Date: Thu, 04 Dec 2008 04:49:08 GMT
+Content-Type: text/xml; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Expires: Thu, 19 Nov 1981 08:52:00 GMT
+Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Pragma: no-cache
+
+<Response></Response>
+$</pre>
+    </p>
+
+    <h2 id="http_status_codes_section">HTTP Status Codes</h2>
+    <p>
+      The API will return the following HTTP Status Codes:
+    </p>
+    <table>
+      <tr>
+        <th>status code</th>
+        <th>meaning</th>
+        <th>description</th>
+      </tr>
+      <tr>
+        <td>200</td>
+        <td>OK</td>
+        <td>Everything went well and while there might be <i>Warnings</i> or
+        <i>Errors</i> in the <i>Response</i> Object, the request was
+        processed.</td>
+      </tr>
+      <tr>
+        <td>400</td>
+        <td>Bad Request</td>
+        <td>The request was either invalid or malformed in some way.
+        For example, a <i>create</i> call with no xml or json request
+        parameter in the POST args would return a <b>400 Bad
+        Request</b> from the server.</td>
+      </tr>
+      <tr>
+        <td>401</td>
+        <td>Unauthorized</td>
+        <td>An OAuth Consumer will receive a 401 Unauthorized response
+        from the API for three reasons. 1) The authentication
+        credentials passed to the API for the request were somehow
+        invalid.  This status code could be caused by an invalid
+        username/password combination used in the web authentication
+        scheme or an invalid OAuth token for the OAuth scheme.  2) The
+        TripIt account for which the consumer was authorized is no
+        longer authorizing it. 3) The OAuth Consumer key has been
+        de-activated.</td>
+      </tr>
+      <tr>
+        <td>403</td>
+        <td>Forbidden</td>
+        <td>An OAuth Consumer will receive a 403 Forbidden response
+        from the API when the TripIt account for which the consumer
+        was authorized is not yet confirmed.  The most common
+        situation in which this happens is when a new account that
+        authorizes an API client hasn't been confirmed before the API
+        client attempts to execute a read operation on the API
+        (e.g. /v1/list/trip).</td>
+      </tr>
+      <tr>
+        <td>404</td>
+        <td>Not Found</td>
+        <td>Either the resource URL or the object the client was
+        requesting either does not exist or the user the client was
+        authenticated and does not have permission to operate on the
+        object.</td>
+      </tr>
+      <tr>
+        <td>500</td>
+        <td>Server Error</td>
+        <td>Something catastrophic happened while the TripIt platform
+        was trying to complete the request.  A 500 error is a pretty
+        serious and catastrophic problem that should be reported to
+        the TripIt engineering team through support@tripit.com.</td>
+      </tr>
+      <tr>
+        <td>503</td>
+        <td>Service Unavailable</td>
+        <td>The TripIt API is currently undergoing maintenance and
+          is not available.</td>
+      </tr>
+</table>
+
+    <h2 id="request_response_section">Request/Response Objects</h2>
+    <p>
+      There are two types of documents used to communicate with the
+      API.  A Request document is used when the client is asking
+      something of the API (e.g. create a new object, get me a list of
+      Trip objects, etc...).  A Response document is what the API will
+      send back to the client with an answer to the Request.  The XML
+      Schema that describe valid Request and Response documents may be
+      found here:
+    </p>
+    <p>
+      <ul>
+        <li><a href="https://api.tripit.com/xsd/tripit-api-obj-v1.xsd">tripit-api-obj-v1.xsd</a> - describes all the travel objects</li>
+        <li><a href="https://api.tripit.com/xsd/tripit-api-req-v1.xsd">tripit-api-req-v1.xsd</a> - describes the Request object</li>
+        <li><a href="https://api.tripit.com/xsd/tripit-api-res-v1.xsd">tripit-api-res-v1.xsd</a> - describes the Response object</li>
+      </ul>
+    </p>
+    <p>
+      These schemas completely describe all of the valid XML documents
+      that can be posted to and received from the API.
+    </p>
+    <h3>Request Object</h3>
+    <p>
+      Used for create operations, a Request object wraps one travel
+      object in the xml parameter of an HTTP POST.  Please note that a
+      Request object may contain no more than one travel object.
+    </p>
+    <p>
+      If a travel object contains a trip_id then the object will be
+      placed in the trip with the matching id. If a travel object does
+      not contain a trip_id and the TripIt user has their
+      'auto-import' account preference set to 'On', the travel object
+      will be inserted into the trip in the user's account that it
+      overlaps with in time.  If the travel object does not overlap
+      with any trips, and the 'auto-import' feature is turned 'Off'
+      then the it will be placed under 'Unfiled items'.
+    </p>
+    <h3>Response Object</h3>
+    <p>
+      A Response object is used to wrap one or more travel objects as
+      well as one or more Warning and/or Error objects in a response
+      from either a <i>get</i>, <i>create</i>, or <i>delete</i>
+      request.
+    </p>
+    <p>
+      When creating a new object the response will contain the travel
+      object you sent in plus the object IDs that they are now
+      associated with that object.  A client can use this ID in
+      subsequent <i>get</i> operations.
+    </p>
+    <h4>Warning Object</h4>
+    <p>
+      The presence of a Warning in a Response object means that the
+      TripIt API was able to complete the request successfully but the
+      API detected something about the data in the Request object that
+      may produce unintended consequences.
+    </p>
+    <p>
+      An example of a condition that would produce a Warning is if the
+      Request object contained a check-in date for a LodgingObject that
+      was after the check-out date for that LodgingObject.
+    </p>
+    <p>
+      <i>TBD - document more of these</i>
+    </p>
+    <h4>Error Object</h4>
+    <p>
+      The presence of an Error in a Response object means that the
+      TripIt API was not able to persist the object in question in the
+      Request.  The entire request transaction will be failed.
+    </p>
+    <p>
+      <i>TBD - document examples of these</i>
+    </p>
+    <h2 id="pro_data_section">Pro Data</h2>
+    <p>
+      Any TripIt API client that is authorized to request data from
+      the API on behalf of a TripIt user that happens to be a <a href="http://www.tripit.com/pro/">TripIt Pro</a> subscriber
+      will automatically receive Pro data in the &lt;Response&gt;
+      objects.  The Pro data that is currently available in the API
+      is limited to the following:
+    </p>
+    <p>
+      <ul>
+        <li>AirObject :: AirSegment :: FlightStatus</li>
+        <li>AirObject :: AirSegment :: alternate_flights_url</li>
+        <li>Point Tracker</li>
+      </ul>
+    </p>
+    <p>
+      Each one of these is discussed in more detail below.
+    </p>
+    <h3>AirObject :: AirSegment :: FlightStatus</h3>
+    <p>
+      The FlightStatus object is defined here in the object XSD here: <a href="https://api.tripit.com/xsd/tripit-api-obj-v1.xsd">tripit-api-obj-v1.xsd</a>.
+      Here's a definition of all of the properties within the FlightStatus object:
+    </p>
+    <p>
+      <table>
+        <tr>
+          <th>Property</th>
+          <th>Definition</th>
+        </tr>
+        <tr>
+          <td>ScheduledDepartureDateTime</td>
+          <td>The originally scheduled departure date and time of the flight.
+            Note: this DateTime value does not necessarily match the
+            StartDateTime of the enclosing AirSegment object.  That value
+            is set by the user in either the UI or via the data found
+            within the confirmation email that was used to create the
+            flight.</td>
+        </tr>
+        <tr>
+          <td>EstimatedDepartureDateTime</td>
+          <td>The current estimated departure date and time of the flight.</td>
+        </tr>
+        <tr>
+          <td>ScheduledArrivalDateTime</td>
+          <td>The current scheduled arrival date and time of the flight.  Note:
+            this DateTime value does not necessarily match the EndDateTime
+            of the enclosing AirSegment object.  That value is set by the
+            user in either the UI or via the data found within the
+            confirmation email that was used to create the flight.</td>
+        </tr>
+        <tr>
+          <td>EstimatedArrivalDateTime</td>
+          <td>The current estimated arrival date and time of the flight.</td>
+        </tr>
+        <tr>
+          <td>departure_terminal</td>
+          <td>The current departure terminal information.  Note: this property's
+            value does not necessarily match the start_terminal
+            of the enclosing AirSegment object.  That value is set by the
+            user in either the UI or via the data found within the
+            confirmation email that was used to create the flight.</td>
+        </tr>
+        <tr>
+          <td>departure_gate</td>
+          <td>The current departure gate information.  Note: this property's
+            value does not necessarily match the start_gate
+            of the enclosing AirSegment object.  That value is set by the
+            user in either the UI or via the data found within the
+            confirmation email that was used to create the flight.</td>
+        </tr>
+        <tr>
+          <td>arrival_terminal</td>
+          <td>The current arrival terminal information.  Note: this property's
+            value does not necessarily match the end_terminal
+            of the enclosing AirSegment object.  That value is set by the
+            user in either the UI or via the data found within the
+            confirmation email that was used to create the flight.</td>
+        </tr>
+        <tr>
+          <td>arrival_gate</td>
+          <td>The current arrival gate information.  Note: this property's
+            value does not necessarily match the end_gate
+            of the enclosing AirSegment object.  That value is set by the
+            user in either the UI or via the data found within the
+            confirmation email that was used to create the flight.</td>
+        </tr>
+        <tr>
+          <td>layover_minutes</td>
+          <td>If layover_minutes is contained within the FlightStatus object
+              contained with an AirSegment that
+              isn't the last segment in a leg the value of layover_minutes
+              will be the number of minutes between this segment's arrival
+              time and the next segment's departure time.</td>
+        </tr>
+        <tr>
+          <td>baggage_claim</td>
+          <td>The current baggage claim area.</td>
+        </tr>
+        <tr>
+          <td>diverted_airport_code</td>
+          <td>If the flight was diverted, this is the three-letter IATA code of the new airport.</td>
+        </tr>
+        <tr>
+          <td>last_modified</td>
+          <td>This is the Unix time when the status of this flight was last updated.</td>
+        </tr>
+      </table>
+    </p>
+    <p>
+      There is one more property called flight_status that is a new object type that can have one of the following values:
+    </p>
+    <p>
+      <table>
+        <tr>
+          <th>Value</th>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td>100</td>
+          <td>Not Monitorable</td>
+          <td>An AirSegment in this state is usually in this state because the TripIt platform doesn't have enough information about the flight to monitor it.  The minimum set of required data needed to monitor a flight are valid values (i.e. a real flight) for the following properties of a AirSegment:
+            <ul>
+              <li>marketing_airline</li>
+              <li>marketing_flight_number</li>
+              <li>StartDateTime</li>
+              <li>start_airport_code</li>
+              <li>end_airport_code</li>
+            </ul>
+            In addition to containing values for these properties, the following must also be true for the flight to be monitorable:
+            <ul>
+              <li>The AirObject must be contained within a trip that has at least one Pro account traveling on the trip</li>
+              <li>The AirSegment hasn't already departed.</li>
+              <li>The marketing flight number of the AirSegment must not have alpha characters (i.e. [A-Za-z]) in it</li>
+              <li>The marketing flight number of the AirSegment must not have more than 4 digits</li>
+              <li>The marketing airline code of the AirSegment must not have a value of "--" (Other)</li>
+           </ul>
+          </td>
+       </tr>
+       <tr>
+         <td>200</td>
+         <td>Not Monitored</td>
+         <td>This flight is not being monitored even if it meets all of the criteria to be monitorable if the following conditions are true:
+           <ul>
+             <li>The flight is either not a real flight or TripIt doesn't have a record of it in its database.</li>
+             <li>If TripIt can't determine the current status of the flight</li>
+          </ul>
+         </td>
+       </tr>
+       <tr>
+         <td>300</td>
+         <td>Scheduled</td>
+         <td>The flight is monitored but the TripIt platform hasn't seen any updates to the flight yet.</td>
+       </tr>
+       <tr>
+          <td>301</td>
+          <td>On Time</td>
+          <td>The flight is currently considered to be on time, which means that the (EstimatedDepartureDateTime - ScheduledDepartureDateTime) &lt;= 14 minutes.</td>
+       </tr>
+        <tr>
+          <td>302</td>
+          <td>In Flight - On Time</td>
+          <td>The flight is currently in the air and is considered to be on time, which means that the (EstimatedArrivalDateTime - ScheduledArrivalDateTime) &lt;= 14 minutes.</td>
+       </tr>
+        <tr>
+          <td>303</td>
+          <td>Arrived - On Time</td>
+          <td>The flight has arrived and the actual arrival time was within 14 minutes of the ScheduledArrivalDateTime.</td>
+       </tr>
+        <tr>
+          <td>400</td>
+          <td>Cancelled</td>
+          <td>The flight has been cancelled.</td>
+       </tr>
+        <tr>
+          <td>401</td>
+          <td>Delayed</td>
+          <td>The flight is currently considered to be on time, which means that the (EstimatedDepartureDateTime - ScheduledDepartureDateTime) &gt;= 15 minutes.</td>
+       </tr>
+        <tr>
+          <td>402</td>
+          <td>In Flight - late</td>
+          <td>The flight is currently in the air and is considered to be on time, which means that the (EstimatedArrivalDateTime - ScheduledArrivalDateTime) &gt;= 15 minutes.</td>
+       </tr>
+        <tr>
+          <td>403</td>
+          <td>Arrived - late</td>
+          <td>The flight has arrived and the actual arrival time was more than 14 minutes after the ScheduledArrivalDateTime.</td>
+       </tr>
+        <tr>
+          <td>404</td>
+          <td>Diverted</td>
+          <td>The flight was diverted to an airport other than the one it was originally going to fly into.</td>
+       </tr>
+     </table>
+    </p>
+
+   <h3>AirObject :: AirSegment :: alternate_flights_url</h3>
+   <p>
+     The alternate flights URL is a relative URL that a client
+     application can use to provide alternate flight information for a
+     specific AirSegment object.  The URL can be used to reference the
+     alternate flight information on both http://www.tripit.com/ and
+     http://m.tripit.com/.
+   </p>
+
+   <h3>Point Tracker</h3>
+   <p>
+     Data from TripIt Pro's Point Tracker feature is available via the
+     API as well.  The methods to obtain this are:
+     <ul>
+       <li>https://api.tripit.com/v1/list/points_program</li>
+       <li>https://api.tripit.com/v1/get/points_program/id/####</li>
+     </ul>
+     and are described in the /v1/list and /v1/get documentation in
+     more detail.
+   </p>
+
+   <h2 id="deprecation_policy_section">Deprecation Policy</h2>
+    <p>
+      This document describes the v1 version of the TripIt API.  The
+      v1 API may be continually updated in backwards-compatible ways
+      that won't break v1 compliant clients.  Backwards compatible
+      means that the additions to the v1 API should not break a
+      properly written v1 client.  The types of changes that may be
+      introduce include the addition of new methods, new object
+      properties, and new travel objects.  The types of changes that
+      would <b>not</b> be possible in the v1 API would include things such as
+      the changing of object names, object properties, or the removal
+      of methods.
+    </p>
+    <p>
+      The v1 API will continue to be supported until the v2 API is
+      released and has been available in production for some period of
+      time.  After the v2 API becomes available, the v1 API will be
+      considered deprecated and all v1 clients should migrate to use
+      the v2 API.  Within a reasonable period of time after being
+      deprecated, TripIt may decide it's necessary to turn off the v1
+      API after which point v1 clients will cease to function.
+    </p>
+    <p>
+     Any changes or deadlines for deprecation will be announced at
+     the TripIt API Google group.
+   </p>
+
+    <h2 id="release_notes_section">Release Notes</h2>
+    <p>
+      This section covers all outstanding known issues and/or known
+      gotchas that aren't more appropriately described elsewhere.
+    </p>
+    <p>
+      <ul>
+        <li>Not all travel objects will display an image sent in via
+        the API.  This is a limitation of the current TripIt UI and
+        not the API.  This may change in the future.</li>
+        <li>The API makes no attempt to provide feedback on whether or
+        not an input string is too long to fit in the database it is
+        destined for.  Therefore, truncation may happen silently.</li>
+      </ul>
+    </p>
+
+    <h2 id="examples_section">Examples</h2>
+    <p>
+      <i>TBD - we're going to include links to Hello, World type applications here</i>
+    </p>
+    <div id="footer">
+      <small>
+        ID: $Id: index.html 33232 2011-02-22 18:01:30Z harold $ <br />
+        Last Modified: $LastChangedDate: 2011-02-22 10:01:30 -0800 (Tue, 22 Feb 2011) $ <br />
+        Copyright 2006-2011, TripIt, Inc.
+      </small>
+    </div>
+  </body>
+</html>
