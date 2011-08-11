@@ -1,0 +1,73 @@
+<html>
+  <head>
+    <title>TripIt API Documentation - v1</title>
+  <style type="text/css">
+    body { font: normal 12px Arial, Helvetica, Verdana, sans-serif; }
+    h2 { background-color: #cccccc; padding: 1px; }
+    h3 { background-color: #aaffff; margin: 10px; padding: 1px; }
+    h4 { background-color: #ccffcc; margin: 20px; padding: 1px; }
+    p { margin: 30px; }
+    ul { margin: 30px; }
+    pre { background-color: #cccccc; padding: 1px; border: 1px; border-style: solid; align: center; margin: 40px; }
+    .note { background-color: #ffff00; padding: 1px; border: 1px; border-style: solid; align: center; margin: 40px; }
+    table { border: 1px; border-style: solid; padding: 0px; width: 80%; margin-left: auto; margin-right: auto; }
+    table th { border: 1px; border-style: solid; }
+    table td { border: 1px; border-style: solid; }
+  </style>
+  </head>
+  <body>
+    <h1>TripIt API Documentation - v1 - Notification API</h1>
+
+    <h2>Index</h2>
+      <ul>
+        <li><a href="#overview_section">Overview</a></li>
+        <li><a href="#api_section">API Endpoints</a></li>
+      </ul>
+
+    <h2 id="overview_section">Overview</h2>
+    <p>
+      The TripIt Notification API allows a developer to receive a push
+      notification from TripIt when a change occurs in a user's trips.
+      By registering to receive such notifications and by implementing an HTTPS
+      listener endpoint, the developer will receive the identity of the
+      object that has changed so that he can retrieve the updated object
+      and keep his system up to date with TripIt.
+    </p>
+    <p>
+      Subscribing to and unsubscribing from a user's trip changes is done with
+      API calls that follow the same authentication and logical patterns as
+      the other TripIt API endpoints. Every such request must be authenticated
+      with OAuth in order to authorize the developer, and also to identify the
+      user for which subscriptions are made.
+
+    <h2 id="api_section">API Endpoints</h2>
+    <h3>Subscribe</h3>
+      <p>In order to subscribe to notification events for a user, call the "/v1/subscribe" endpoint in the TripIt API. The "subscribe" endpoint takes a single required parameter called "type". Currently, the only valid value for the "type" parameter is "trip".</p>
+      <p>So as an example, in order to subscribe to a specific user's trip notification events, simply call, with the necessary OAuth authentication credentials, "/v1/subscribe/type/trip".</p>
+    <h3>Unsubscribe</h3>
+      <p>In order to unsubscribe from a user's notification events, call the "/v1/unsubscribe" endpoint in the TripIt API. The "unsubscribe" endpoint takes an optional parameter called "type". If specified, it indicates the type of notification from which to unsubscribe. If not specified, all notification subscriptions for the user are removed.</p>
+    <h3>Callback URL</h3>
+    <p>
+      Currently, notifications may be subscribed to for changes to trip objects.
+    </p>
+    <p>
+      When a change is made to a trip to which you are subscribed, TripIt will:w
+      make a corresponding HTTP request to your server on a URL that you
+      provide. In order to provide the URL to TripIt, contact TripIt support.
+    </p>
+    <p>
+      The URL is called with the following HTTP POST parameters:
+      <ul>
+        <li>type - The type of the object that was changed. Currently, this is always "trip". In the future additional types may be available, so this parameter should be checked.</li>
+        <li>id - The TripIt ID of the object that was changed. If the object is a trip, for example, this ID may be used with the API to fetch the trip details.</li>
+      </ul>
+    </p>
+    <div id="footer">
+      <small>
+        ID: $Id: index.html 33232 2011-02-22 18:01:30Z harold $ <br />
+        Last Modified: $LastChangedDate: 2011-02-22 10:01:30 -0800 (Tue, 22 Feb 2011) $ <br />
+        Copyright 2006-2011, TripIt, Inc.
+      </small>
+    </div>
+  </body>
+</html>
