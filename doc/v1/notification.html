@@ -43,7 +43,7 @@
     <h2 id="api_section">API Endpoints</h2>
     <h3>Subscribe</h3>
       <p>In order to subscribe to notification events for a user, call the "/v1/subscribe" endpoint in the TripIt API. The "subscribe" endpoint takes a single required parameter called "type". Currently, the only valid value for the "type" parameter is "trip".</p>
-      <p>So as an example, in order to subscribe to a specific user's trip notification events, simply call, with the necessary OAuth authentication credentials, "/v1/subscribe/type/trip".</p>
+      <p>So as an example, in order to subscribe to a specific user's trip notification events, simply call, with the necessary OAuth authentication credentials, "/v1/subscribe?type=trip".</p>
     <h3>Unsubscribe</h3>
       <p>In order to unsubscribe from a user's notification events, call the "/v1/unsubscribe" endpoint in the TripIt API. The "unsubscribe" endpoint takes an optional parameter called "type". If specified, it indicates the type of notification from which to unsubscribe. If not specified, all notification subscriptions for the user are removed.</p>
     <h3>Callback URL</h3>
@@ -51,15 +51,18 @@
       Currently, notifications may be subscribed to for changes to trip objects.
     </p>
     <p>
-      When a change is made to a trip to which you are subscribed, TripIt will:w
+      When a change is made to a trip to which you are subscribed, TripIt will
       make a corresponding HTTP request to your server on a URL that you
       provide. In order to provide the URL to TripIt, contact api-support@tripit.com. Please include the application name, email address used to register the application, and the desired callback URL in the email.
     </p>
+    <p>The callback URL must use SSL/TLS (it must be an HTTPS URL) and it may not contain ? or &. It also must not redirect. Upon successful receipt of a notification it must return HTTP 200.
     <p>
-      The URL is called with the following HTTP POST parameters:
+      The callback URL is called with the following HTTP POST parameters:
       <ul>
         <li>type - The type of the object that was changed. Currently, this is always "trip". In the future additional types may be available, so this parameter should be checked.</li>
         <li>id - The TripIt ID of the object that was changed. If the object is a trip, for example, this ID may be used with the API to fetch the trip details.</li>
+        <li>change - The type of change made to the object that was changed. The valid change types are "created", "updated", "merged", "deleted", "plans_created", "plans_updated", "plans_deleted", "plans_moved", "plans_copied", "comment_created", "comment_deleted", and "invitations_created".</li>
+        <li>oauth_token_key - One or more of these parameters will be included. Each is the OAuth token key of one user for whom you are subscribed for this specific change notification.</li>
       </ul>
     </p>
     <div id="footer">
