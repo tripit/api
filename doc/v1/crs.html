@@ -1,0 +1,646 @@
+<html>
+  <head>
+    <title>TripIt CRS API Documentation - v1</title>
+  <style type="text/css">
+    body { font: normal 14px Arial, Helvetica, Verdana, sans-serif; }
+    h2 { background-color: #cccccc; padding: 1px; }
+    h3 { background-color: #ccff00; margin: 10px; padding: 1px; }
+    h4 { background-color: #ccffcc; margin: 20px; padding: 1px; }
+    p { margin: 30px; }
+    ul { margin: 30px; }
+    pre { background-color: #cccccc; padding: 1px; border: 1px; border-style: solid; align: center; margin: 40px; }
+    .note { background-color: #ffff00; padding: 1px; border: 1px; border-style: solid; align: center; margin: 40px; }
+    table { border: 1px; border-style: solid; padding: 0px; width: 80%; margin-left: auto; margin-right: auto; }
+    table th { border: 1px; border-style: solid; }
+    table td { border: 1px; border-style: solid; }
+  </style>
+  </head>
+  <body>
+    <h1>TripIt CRS API Documentation - v1</h1>
+
+    <h2>Index</h2>
+      <ul>
+        <li><a href="#overview_section">Overview</a></li>
+        <li><a href="#authentication_section">Authentication</a></li>
+        <li><a href="#encoding_section">Encoding</a></li>
+        <li><a href="#resource_section">Resource URLs</a></li>
+        <li><a href="#http_status_codes_section">HTTP Status Codes</a></li>
+        <li><a href="#request_response_section">Request/Response Objects</a></li>
+        <li><a href="#viewing_itinerary_section">Viewing the Itinerary</a></li>
+        <li><a href="#pro_data_section">TripIt Pro Data</a></li>
+        <li><a href="#deprecation_policy_section">Deprecation Policy</a></li>
+        <li><a href="#release_notes_section">Release Notes</a></li>
+        <li><a href="#examples_section">Example</a></li>
+      </ul>
+
+    <h2 id="overview_section">Overview</h2>
+    <p>
+      The CRS API allows select TripIt partners (from now on referred to as <i>"partner"</i>)
+      to programatically load, replace, and delete groups of travel objects and trip remarks
+      in the TripIt platform on behalf of their customers.  The kinds of partners interested
+      in this functionality may include travel management companies, global distribution
+      systems, travel suppliers, etc...  Travel objects and trip remarks are grouped together
+      by a Record Locator value.  Following is a list of object types supported by the CRS API:
+    </p>
+    <p>
+      Travel Object Types:
+      <ul>
+        <li>ActivityObject</li>
+        <li>AirObject</li>
+        <li>CarObject</li>
+        <li>CruiseObject</li>
+        <li>LodgingObject</li>
+        <li>RailObject</li>
+        <li>RestaurantObject</li>
+        <li>TransportObject</li>
+      </ul>
+    </p>
+    <p>
+      Trip Remark Object Type:
+      <ul>
+        <li>TripCrsRemark</li>
+      </ul>
+    </p>
+    <p>
+      The TripIt CRS API is built on top of the <i>public TripIt API</i>.  Since both API's
+      share many of the same fundamentals, it will be helpful for anyone using the CRS API to
+      first familiarize themselves with the public TripIt API documentation available
+      <a href="http://tripit.github.com/api/doc/v1/">here</a>.
+    </p>
+    <p>
+      For status on maintenance windows and operational issues related to the CRS API please
+      go to our status blog at <a href="http://status.tripit.com/">status.tripit.com</a>.
+    </p>
+
+    <h2 id="authentication_section">Authentication</h2>
+    <h3>2-legged OAuth</h3>
+
+    <p>
+      The public TripIt API offers two methods of authentication for API calls:
+      <i>Web Authentication</i> and <i>3-legged OAuth</i>.  Neither is particularly useful
+      for a partner interested in loading travel data from their system into the TripIt
+      platform without having to store per-user credentials and per-user information in
+      their own system.
+    </p>
+
+    <p>
+      To satisfy the needs of a partner, TripIt's CRS API makes available a modified 2-legged
+      OAuth scheme in which each partner (<i>the "oauth consumer"</i>) is supplied with a
+      special key that enables them to authenticate with TripIt's CRS API on behalf of TripIt
+      users (<i>the "oauth user"</i>) that have authorized them to do so.  By default every
+      TripIt user is configured so that the partner does not have this ability;  however,
+      TripIt provides a simple page flow to facilitate users' granting the partner access to
+      load, replace, and delete travel data contained in their TripIt user account.
+    </p>
+
+    <p>
+      To implement the 2-legged OAuth scheme, the oauth consumer needs to implement the
+      following:
+    </p>
+
+    <ol>
+      <li>
+        An oauth consumer needs to have a TripIt account with which the consumer is associated.
+        For a large company this should probably be a general account that is not also used for
+        personal use to avoid issues with account deletion or merge.
+      </li>
+      <li>
+        Once that account is created, the owner needs to register a 3-legged oauth consumer
+        (see the <a href="http://www.tripit.com/developer/create">TripIt application
+        registration page</a>) which will be the consumer used to load, replace, and delete
+        their customers' travel data.
+      </li>
+      <li>
+        Upon request, TripIt engineering will promote this 3-legged oauth consumer to be a
+        2-legged consumer and replace the consumer key with well-known public key.
+      </li>
+      <li>
+        The consumer is now ready to make calls to the TripIt CRS API.  In order to make
+        a call on behalf of a TripIt user (assuming the user has authorized the consumer
+        to do so) the consumer will need to form a standard public TripIt API OAuth call
+        with the following modifications:
+        <ul>
+          <li>
+            The oauth_consumer_key passed in each request is the public key described above.
+          </li>
+          <li>
+            The oauth_token_secret is the shared secret generated for this consumer when
+            the application was created.
+          </li>
+          <li>
+            An additional OAuth extension parameter called <i>xoauth_requestor_id</i> needs
+            to be passed in the Authorization header of the HTTP request.  The value of this
+            parameter is the email address associated with the TripIt account that the call
+            is being made on behalf of.
+          </li>
+          <li>
+            In every other respect a 2-legged OAuth call is exactly the same as a standard
+            3-legged OAuth call that is made to obtain a protected resource (i.e. a call made
+            after the authorized access token has been obtained).  If the user identified in
+            the <i>xoauth_requestor_id</i> has not authorized the consumer to make OAuth
+            authenticated requests on his/her behalf then the API responds with a standard HTTP
+            401 unauthorized error message. 
+          </li>
+        </ul>
+      </li>
+    </ol>
+
+    <p>
+      A successful call via the 2-legged OAuth scheme can only be made on behalf of a TripIt
+      account if that user has authorized the consumer application to do so.  Here's what
+      needs to happen in order for the TripIt user to authorize the consumer:
+    </p>
+
+    <ol>
+      <li>
+        Either at account creation time or later the consumer needs to direct the TripIt user
+        to a secure (ie: SSL) web page, https://www.tripit.com/oauth/authorize, which prompts
+        the user to grant access for the consumer.
+      </li>
+      <li>
+        The act of granting access to a specific consumer should cause that consumer to appear
+        on the TripIt user's list of authorized applications here:
+        http://www.tripit.com/account/edit/section/applications.  The user is also able to
+        de-authorize access at any time.
+      </li>
+    </ol>
+
+    <p>
+      For information on <i>Web Authentication</i> and standard
+      <i>3-legged OAuth</i>, please refer to the
+      <a href="http://tripit.github.com/api/doc/v1/#authentication_section">public TripIt API</a>
+      documentation.
+    </p>
+
+    <h2 id="encoding_section">Encoding</h2>
+    <p>
+      Please refer to the
+      <a href="http://tripit.github.com/api/doc/v1/#encoding_section">public TripIt API</a>
+      documentation.
+    </p>
+
+    <h2 id="resource_section">Resource URLs</h2>
+    <p>
+      Please refer to the
+      <a href="http://tripit.github.com/api/doc/v1/#resource_section">public TripIt API</a>
+      documentation for general information, portions of which pertain to partners' use of the
+      CRS API.  The following documentation describes CRS-specific resource URLs available
+      only in the TripIt CRS API.
+    </p>
+    <p>
+      There are currently two requests supported by the CRS API: <i>crsLoadReservations</i>
+      and <i>crsDeleteReservations</i>.  Each is explained below in greater detail.
+    </p>
+
+    <h3>crsLoadReservations</h3>
+    <p>
+      A <i>crsLoadReservations</i> request is used to load or replace a set of travel objects
+      and trip crs remarks.  To invoke, send an HTTP POST request to the following URL:
+    </p>
+    <p>
+      <pre>https://api.tripit.com/v1/crsLoadReservations</pre>
+    </p>
+    <p>
+      The XML document containing travel objects and trip remarks must validate against the
+      <a href="https://api.tripit.com/xsd/tripit-api-crs-req-v1.xsd">TripIt CRS API request XSD</a>
+      and must be POSTed as the value of the request parameter <i>xml</i> in the POST body of
+      the request.
+    </p>
+    <p>
+      An optional <i>company_key</i> parameter may be sent in the request as well.  The length
+      of this request parameter's value is limited to 50 characters.  See below for a
+      description of how this parameter value is stored and what it's used for.
+    </p>
+    <p>
+      Note the <i>record_locator</i> XML element in both the <b>ReservationObject</b>
+      (see <a href="https://api.tripit.com/xsd/tripit-api-obj-v1.xsd">tripit-api-obj-v1.xsd</a>)
+      as well as in <b>TripCrsRemark</b>
+      (see <a href="https://api.tripit.com/xsd/tripit-api-crs-req-v1.xsd">tripit-api-crs-req-v1.xsd</a>).
+      This field is special for the following reasons:
+      <ul>
+        <li>it is used to group travel objects and trip remarks together into a single "booking"</li>
+        <li>it is not visible in any output data format rendered by the TripIt platform *except* for the API</li>
+        <li>it is not editable by TripIt users in the web site's reservation edit UI</li>
+      </ul>
+    </p>
+    <p>
+      While the <i>record_locator</i> field is never rendered to TripIt end users, customarily
+      the value in that field is also stored in another field called <i>supplier_conf_num</i>
+      which is rendered and editable by TripIt users much like all other travel objects'
+      fields.
+    </p>
+    <p>
+      The first and most important difference to understand between the public TripIt API's
+      <i>create</i> method and the CRS API's <i>crsLoadReservations</i> method is that the
+      restriction of being able to present only one travel object per call in the former
+      does not exist in the latter.  According to the
+      <a href="https://api.tripit.com/xsd/tripit-api-crs-req-v1.xsd">CRS API XSD</a>,
+      you are allowed to specify multiple travel objects as well as multiple trip remarks
+      in each <i>crsLoadReservations</i> request.
+    </p>
+    <a name="crsLoadResLogic" />
+    <p>
+      Following is the high level logic executed during <i>crsLoadReservations</i>:
+      <pre>
+1. group incoming travel objects and trip remarks by their record_locator value
+   a. note that this approach makes TripIt compatible with partners who support the
+      notion of a "SuperPNR"
+   b. any travel objects or trip remarks without a record_locator value will cause
+      the entire crsLoadReservations request to fail with an HTTP 400 error
+2. for each record_locator value present in the new objects contained in the request
+   a. retrieve all travel objects and trip remarks with that record_locator value
+      which may already exist in the TripIt platform
+   b. determine what TripIt trip(s) the travel objects belong to
+      * if no travel objects or trip remarks already exist,
+         - create a new TripIt trip for the incoming travel objects and trip remarks
+         - note that this trip will be associated with the partner causing it's creation
+           for the purposes of displaying that partner's logo along with that trip
+         - note also that the trip will be tagged with the value of the optional
+           'company_key' request parameter (see below) for the purpose of identifying
+           the partner's client to bee associated with this trip
+      * if some travel objects and/or trip remarks were found, determine which TripIt
+        trip(s) they already belong to
+         - if they all belong to exactly one trip: all incoming travel objects and trip
+           remarks will be placed in that trip
+         - if they belong to multiple trips: choose the trip containing the highest
+           number of travel objects associated with the specified record_locator
+   c. delete all travel objects and/or trip remarks found in 2a
+   d. store all incoming travel objects and trip remarks, placing them in the TripIt
+      trip selected in 2b
+3. perform all of the following TripIt special sauce logic:
+   a. for any trips that were changed during the course of the request, assert correctness
+      of auto weather, dates, maps, directions, timezones, etc...
+   b. for any air objects that were created during the request, enrich segment data from
+      faa flight info, etc...
+   c. if TripIt Pro is enabled,
+      * activate realtime flight monitoring for all air reservations
+      * auto-invite inner circle members to the trip(s)
+      * etc...
+4. generate and return a response to the client with the newly-stored objects' data
+</pre>
+    </p>
+
+    <p>
+      Note that if a brand new TripIt trip is created in step 2b above, the newly-created trip
+      is tagged with two pieces of information:
+    </p>
+
+    <ol>
+      <li>
+        If specified in the request, we tag the trip with the <i>company_key</i> value passed
+        as a request parameter to <i>crsLoadReservations</i>.  This company key is used to
+        identify the partner's client or other entity to be associated with this newly-created
+        itinerary.
+      </li>
+      <li>
+        We also store the specific oauth consumer (partner) that caused the trip to be created.
+      </li>
+    </ol>
+
+    <h4>Example:</h4>
+    <p>
+      Here is a sample <i>crsLoadReservations</i> request:
+    </p>
+    <p>
+      Here is what the post data would look like:
+      <pre>
+company_key=SomeCompanyName&amp;\
+xml=&lt;CrsRequest&gt;
+  &lt;AirObject&gt;
+    &lt;record_locator&gt;ABC123&lt;/record_locator&gt; &lt;!-- this field is used to group objects and remarks --&gt;
+    &lt;supplier_conf_num&gt;ABC123&lt;/supplier_conf_num&gt; &lt;!-- this field is rendered and editable to the TripIt user --&gt;
+    . . . see <a href="https://api.tripit.com/xsd/tripit-api-obj-v1.xsd">tripit-api-obj-v1.xsd</a> for a complete list of &lt;AirObject&gt; fields available for you to populate . . .
+    &lt;notes&gt;
+      (you can store notes on a per-AirObject basis)
+    &lt;/notes&gt;
+    &lt;restrictions&gt;
+      (restrictions are typically used to store PNR fare rules, etc...)
+    &lt;/restrictions&gt;
+    &lt;AirSegment&gt;
+    . . . see <a href="https://api.tripit.com/xsd/tripit-api-obj-v1.xsd">tripit-api-obj-v1.xsd</a> for a complete list of &lt;AirSegment&gt; fields available for you to populate . . .
+    &lt;/AirSegment&gt;
+    &lt;AirSegment&gt;
+      ...
+      &lt;notes&gt;
+        (you can also store notes on a per-AirSegment basis)
+      &lt;/notes&gt;
+    &lt;/AirSegment&gt;
+    &lt;Traveler&gt;
+    . . . see <a href="https://api.tripit.com/xsd/tripit-api-obj-v1.xsd">tripit-api-obj-v1.xsd</a> for a complete list of &lt;Traveler&gt; fields available for you to populate . . .
+    &lt;/Traveler&gt;
+  &lt;/AirObject&gt;
+  &lt;LodgingObject&gt;
+    &lt;record_locator&gt;ABC123&lt;/record_locator&gt;
+    &lt;supplier_conf_num&gt;ABC123&lt;/supplier_conf_num&gt;
+    . . . see <a href="https://api.tripit.com/xsd/tripit-api-obj-v1.xsd">tripit-api-obj-v1.xsd</a> for a complete list of &lt;LodgingObject&gt; fields available for you to populate . . .
+    &lt;notes&gt;
+      ...
+    &lt;/notes&gt;
+    &lt;restrictions&gt;
+      ...
+    &lt;/restrictions&gt;
+  &lt;/LodgingObject&gt;
+  &lt;CarObject&gt;
+    &lt;record_locator&gt;XYZ456&lt;/record_locator&gt;
+    &lt;supplier_conf_num&gt;XYZ456&lt;/supplier_conf_num&gt;
+    . . . see <a href="https://api.tripit.com/xsd/tripit-api-obj-v1.xsd">tripit-api-obj-v1.xsd</a> for a complete list of &lt;CarObject&gt; fields available for you to populate . . .
+    &lt;notes&gt;
+      ...
+    &lt;/notes&gt;
+    &lt;restrictions&gt;
+      ...
+    &lt;/restrictions&gt;
+  &lt;/CarObject&gt;
+  &lt;TripCrsRemark&gt;
+    &lt;record_locator&gt;ABC123&lt;/record_locator&gt;
+    &lt;notes&gt;Thanks for booking with us.
+In case of emergency, blah blah blah...
+Note that remarks can have multiple lines of text.
+Think of TripCrsRemark's as providing you the ability to store notes on a per-trip basis.&lt;/notes&gt;
+  &lt;/TripCrsRemark&gt;
+  &lt;TripCrsRemark&gt;
+    &lt;record_locator&gt;XYZ456&lt;/record_locator&gt;
+    &lt;notes&gt;Thanks for booking with us.&lt;/notes&gt;
+  &lt;/TripCrsRemark&gt;
+  &lt;TripCrsRemark&gt;
+    &lt;record_locator&gt;XYZ456&lt;/record_locator&gt;
+    &lt;notes&gt;In case your car breaks down, blah blah blah...&lt;/notes&gt;
+  &lt;/TripCrsRemark&gt;
+&lt;/CrsRequest&gt;
+      </pre>
+      This example loads a SuperPNR consisting of two PNR's:  ABC123, and XYZ456.  The first
+      PNR contains an air reservation, a hotel reservation and one remark.  The second PNR
+      contains a car reservation and two remarks.
+    </p>
+
+    <h3>crsDeleteReservations</h3>
+    <p>
+      A <i>crsDeleteReservations</i> request is used to delete all travel
+      objects and trip remarks associated with the specified record locator.
+    </p>
+    <p>
+      <pre>https://api.tripit.com/v1/crsDeleteReservations?record_locator=&lt;PNR&gt;</pre>
+    </p>
+    <p>
+      &lt;PNR&gt; is the Person Name Record, or <i>record locator</i> to be deleted.
+    </p>
+    <h4>Example:</h4>
+    <p>
+      Here is a sample <i>crsDeleteReservations</i> request for PNR "ABC123":
+      <pre>https://api.tripit.com/v1/crsDeleteReservations?record_locator=ABC123</pre>
+      In this example, <i>crsDeleteReservations</i> would delete only one of the two
+      PNR's loaded in the <i>crsLoadReservations</i> example above;  specifically, it would
+      delete the AirObject, the LodgingObject, and one of the three TripCrsRemark's.
+    </p>
+
+    <h2 id="http_status_codes_section">HTTP Status Codes</h2>
+    <p>
+      Please refer to the
+      <a href="http://tripit.github.com/api/doc/v1/#http_status_codes_section">public TripIt API</a>
+      documentation as well as the following CRS-specific documentation below.
+    </p>
+    <p>
+      In addition to the errors and reasons described by the public TripIt API documentation,
+      the CRS API will also return these HTTP Status Codes for the following reasons:
+    </p>
+    <table>
+      <tr>
+        <th>status code</th>
+        <th>meaning</th>
+        <th>description</th>
+      </tr>
+      <tr>
+        <td>400</td>
+        <td>Bad Request</td>
+        <td><i>xoauth_requestor_id</i> request parameter value is missing or contains an invalid email address.</td>
+      </tr>
+      <tr>
+        <td>404</td>
+        <td>Not Found</td>
+        <td>Email address specified in <i>xoauth_requestor_id</i> does not exist in the TripIt platform.</td>
+      </tr>
+    </table>
+
+    <h2 id="request_response_section">Request/Response Objects</h2>
+    <p>
+      Please refer to the
+      <a href="http://tripit.github.com/api/doc/v1/#request_response_section">public TripIt API</a>
+      documentation as well as the following CRS-specific documentation below.
+    </p>
+    <p>
+      There are two types of XML documents used to communicate with the
+      CRS API.  A <b>CrsRequest</b> document is used when the client is asking
+      to load or replace reservations in the TripIt platform.
+      A <b>Response</b> document is what the CRS API returns to the client as an
+      answer to a <b>CrsRequest</b>.  The XML Schemas that describe valid <b>CrsRequest</b>
+      and <b>Response</b> documents may be found here:
+    </p>
+    <p>
+      <ul>
+        <li><a href="https://api.tripit.com/xsd/tripit-api-obj-v1.xsd">tripit-api-obj-v1.xsd</a> -
+            describes all the travel objects</li>
+        <li><a href="https://api.tripit.com/xsd/tripit-api-crs-req-v1.xsd">tripit-api-crs-req-v1.xsd</a> -
+            describes the <b>CrsRequest</b> and <b>TripCrsRemark</b> objects</li>
+        <li><a href="https://api.tripit.com/xsd/tripit-api-res-v1.xsd">tripit-api-res-v1.xsd</a> -
+            describes the <b>Response</b> object</li>
+      </ul>
+    </p>
+    <p>
+      These schemas completely describe all of the valid XML documents
+      that can be posted to and received from the API.
+    </p>
+
+    <h3>CrsRequest Object</h3>
+    <p>
+      Used for load or replace operations, a <b>CrsRequest</b> object wraps one
+      or more travel objects (<b>AirObject</b>, <b>LodgingObject</b>, <b>CarObject</b>,
+      etc...) as well as one or more trip remarks (<b>TripCrsRemark</b>)
+      in the xml parameter value of an HTTP POST request.
+    </p>
+
+    <h3>Response Object</h3>
+    <p>
+      A <b>Response</b> object is used to wrap one or more travel objects as
+      well as one or more <b>Warning</b> and/or <b>Error</b> objects in a response
+      from a <i>crsLoadReservations</i> request.
+    </p>
+
+    <h2 id="viewing_itinerary_section">Viewing the Itinerary</h2>
+    <p>
+      NOTE: only 2-legged oauth consumers will be able to use the mechanisms described in this section.
+    </p>
+    <p>
+      Once a set of travel objects and trip remarks are successfully loaded into the TripIt
+      platform by a partner, they will be available for on-line viewing according to all the
+      trip privacy and access rules defined by the TripIt platform.  For convenience, people
+      invited to the trip will be able to view it at the following terse URL:
+    </p>
+    <ul>
+      <li>http://tripit.com/pnr/ABC123</li>
+    </ul>
+    <p>
+      Note that "ABC123" is the record locator value and this URL can easily be constructed
+      by the partner and included either in the invoice sent to the customer at the time of
+      booking and/or on the purchase confirmation page.  For people who either don't already
+      have a TripIt account and/or have not yet granted access to the partner's consumer, the
+      URL would need to contain a few more parameters in order to facilitate new user account
+      creation and setup:
+    </p>
+    <ul>
+      <li>http://tripit.com/pnr/&lt;record-locator&gt;/client_key/&lt;your-oauth-consumer-key&gt;/email_address/&lt;email-addr-associated-with-pnr&gt;</li>
+    </ul>
+    <p>
+      Here's an example:
+    </p>
+    <ul>
+      <li>http://tripit.com/pnr/ABC123/client_key/mytravelinc/email_address/user%40some-company.com</li>
+    </ul>
+    <p>
+      This URL will guide the user through the steps necessary to create and establish the
+      communication channel the partner will need in order to load, replace, and delete travel
+      objects and trip remarks in their TripIt account moving forward.  Once that communication
+      channel is established it will remain open until/unless the user revokes access to that
+      partner oauth application.  The request parameters in the url above are:
+    </p>
+    <ul>
+      <li><i>pnr</i>: the record locator</li>
+      <li><i>client_key</i>: the oauth consumer key of the partner importing travel data</li>
+      <li><i>email_address</i>: the email address of the traveler associated with the booked PNR</li>
+    </ul>
+    <p>
+      In addition to facilitating the ability for partners to link directly to a user's itinerary, this
+      /pnr url serves a few more useful purposes.  Consider the following two use cases in which the
+      partner's initial invocation of crsLoadReservations fails:
+    </p>
+    <ol>
+      <li>user had not already registered with TripIt using the email address associated with the PNR</li>
+      <li>user had an account with that email address but hadn't already granted access to the partner's consumer</li>
+    </ol>
+    <p>
+      Even if the initial crsLoadReservations fails, partners can still direct users to the /pnr url described
+      above as TripIt can still successfully get the user to their itinerary.  To do so, partners will need to
+      implement a <i>crsLoadReservations callback listener</i>.  Here's an example of how this flow works:
+    </p>
+    <ol>
+      <li>user books travel with partner</li>
+      <li>partner attempts a crsLoadReservations which fails either with a 404 (email address not found in TripIt) or 401 (not authorized)</li>
+      <li>partner still conveys the TripIt /pnr url to the user either on their purchase confirmation page and/or in their invoice email</li>
+      <li>user clicks on the TripIt /pnr url</li>
+      <li>TripIt facilitates creation of a new account and/or granting access to the partner's consumer</li>
+      <li>once account exists in TripIt and has granted access to the consumer, TripIt calls the partner's crsLoadReservations callback listener</li>
+      <li>partner receives https request, verifies oauth signature and once again invokes crsLoadReservation for the specified PNR</li>
+      <li>this time, the crsLoadReservations call will succeed</li>
+      <li>TripIt redirects user's browser to the TripIt itinerary page and they can view their trip!</li>
+    </ol>
+    <p>
+      Some notes:
+    </p>
+    <ul>
+      <li>this on-boarding flow is only required once -- all subsequent crsLoadReservation calls will succeed for travel booked by the user through the partner for as long as the user does not revoke oauth access to the consumer</li>
+      <li>TripIt <b>strongly</b> recommends that the partner perform the oauth signature verification mentioned above</li>
+      <li>the TripIt api bindings support oauth signature verification out of the box</li>
+      <li>in order to implement a ''crsLoadReservations callback listener'', the partner will need to tell TripIt the specific URL and path info to call back to for their registered consumer</li>
+    </ul>
+    <p>
+      In order for TripIt to initiate a request to the partner so that the partner once again tries to load the
+      user's PNR into the TripIt platform, the partner will need to:
+    </p>
+    <ol>
+      <li>set up an https server with valid CA-signed certs</li>
+      <li>validate oauth signatures using the HMAC-SHA1 signature method</li>
+      <li>be able to invoke their crsLoadReservations logic from this <i>crsLoadReservations callback listener</i></li>
+    </ol>
+    <p>
+      The protocol used for this callback will be an oauth-signed https (SSL) GET request.  Partners will be able to configure
+      the hostname and path to which TripIt calls back, and the url will look like this:
+    </p>
+    <ul>
+      <li>https://partner.hostname.com/path/to/whatever?...&pnr=ABC123&email_address=user%40@some-company.com&oauth_signature=xxxxxxxxxxxxxxxx&...</li>
+    </ul>
+    <p>
+      The record locator is included in this GET url under the request parameter key 'pnr'.  In order to support multi-passenger PNR's,
+      TripIt will also make an effort to send the email address specified in the "/pnr" URL (described above) as well.  If the user
+      clicks on a "/pnr" URL that either doesn't contain the 'email_address' request parameter or the value associated with that
+      parameter is not a valid email address, then no email_address parameter will be sent in the listener callback GET request.
+    </p>
+    <p>
+      TripIt will expect two things in the response from this listener callback https request:
+    </p>
+    <ol>
+      <li>A valid http response code.  "2xx" will be interpretted as success and anything else will be considered failure.</li>
+      <li>The email address associated with the PNR that the partner attempted to load.  This email address will be passed
+          back in the response content as a URL-encoded, GET-style query string with the value present under the GET parameter
+          'email_address'.  While passing of this email address back to TripIt is optional, it behooves the partner to send it
+          back in the https response in order to facilitate TripIt's ability to get the user to their itinerary.
+          For example:  in the event that the crsLoadReservation call fails when TripIt is asking the partner to try loading
+          again, TripIt can use this email address to help the user determine that (1) the address simply needs to be added to
+          their already-existing account, (2) that they already have an account with that email address but it needs to be merged
+          into their main account, or (3) that they already have that email address in their account but ownership of the address
+          needs to be confirmed.</li>
+    </ol>
+    <p>
+      Here's a rough illustration of the data involved in this crsLoadReservations callback listener exchange:
+<pre>
+# --------
+# 1) TripIt initiates an oauth-signed HTTPS Request to the partner's SSL server.
+#       NOTES:
+#          - partner configures the "https://tmc.hostname.com/path/to/whatever"
+#          - TripIt includes a 'pnr' GET parameter and signs request: "?...&pnr=ABC123&oauth_signature=xxxxxxxxxxxxxxxx&..."
+# --------
+https://partner.hostname.com/path/to/whatever?...&pnr=ABC123&email_address=user%40@some-company.com&oauth_signature=xxxxxxxxxxxxxxxx&...
+# --------
+# 2) TripIt's https request client waits while the partner immediately calls crsLoadReservations
+# 3) partner calls crsLoadReserations for the specified PNR
+# 4) partner determines whether or not that crsLoadReservations call succeeded
+# 5) partner renders an https response indicating to TripIt if the load call succeeded and the email address associated with the PNR
+# --------
+200 OK
+...
+Content-Length: 39
+
+
+email_address%3Duser%40@some-company.com
+# --------
+</pre>
+    </p>
+    <p>
+      If all goes well TripIt will redirect the user's browser directly to view their trip.  If a failure occurs, TripIt will
+      use the email address sent back in the response to remedy the specific authentication problem that is still preventing
+      crsLoadReservations from succeeding and then attempt the on-boarding process once again.
+    </p>
+
+    <h2 id="pro_data_section">TripIt Pro Data</h2>
+    <p>
+      Please refer to the
+      <a href="http://tripit.github.com/api/doc/v1/#deprecation_policy_section">public TripIt API</a>
+      documentation.
+    </p>
+
+    <h2 id="deprecation_policy_section">Deprecation Policy</h2>
+    <p>
+      Please refer to the
+      <a href="http://tripit.github.com/api/doc/v1/#deprecation_policy_section">public TripIt API</a>
+      documentation.
+    </p>
+
+    <h2 id="release_notes_section">Release Notes</h2>
+    <p>
+      Please refer to the
+      <a href="http://tripit.github.com/api/doc/v1/#release_notes_section">public TripIt API</a>
+      documentation.
+    </p>
+
+    <h2 id="examples_section">Examples</h2>
+    <p>
+      Please refer to the
+      <a href="http://tripit.github.com/api/doc/v1/#examples_section">public TripIt API</a>
+      documentation.
+    </p>
+
+    <div id="footer">
+      <small>
+         &copy; 2006-2012, Concur Technologies, Inc. All rights reserved. TripIt &reg; is a registered trademark of Concur.
+      </small>
+    </div>
+  </body>
+</html>

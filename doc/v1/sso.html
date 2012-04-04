@@ -1,0 +1,148 @@
+<html>
+  <head>
+    <title>HOWTO: TripIt API Single Sign On</title>
+  <style type="text/css">
+    body { font: normal 12px Arial, Helvetica, Verdana, sans-serif; }
+    h2 { background-color: #cccccc; padding: 1px; }
+    h3 { background-color: #aaffff; margin: 10px; padding: 1px; }
+    h4 { background-color: #ccffcc; margin: 20px; padding: 1px; }
+    p { margin: 30px; }
+    ul { margin: 30px; }
+    pre { background-color: #cccccc; padding: 1px; border: 1px; border-style: solid; align: center; margin: 40px; }
+    .note { background-color: #ffff00; padding: 1px; border: 1px; border-style: solid; align: center; margin: 40px; }
+    table { border: 1px; border-style: solid; padding: 0px; width: 80%; margin-left: auto; margin-right: auto; }
+    table th { border: 1px; border-style: solid; }
+    table td { border: 1px; border-style: solid; }
+  </style>
+  </head>
+  <body>
+    <h1>HOWTO: TripIt API Single Sign On</h1>
+    <h2>Overview</h2>
+    <p>
+      Some of the API response objects (e.g. a
+      &lt;alternate_flights_url/ &gt; in the &lt;Segment/&gt;
+      contained within an &lt;AirObject&gt; object) contain relative
+      URLs that reference different functionality related to that
+      object that's only available via the web application.  An API
+      client may reliably include links to those URLs but the user
+      would needs to authenticate with either m.tripit.com or
+      www.tripit.com using their username/password.  Alternatively
+      there is a mechanism by which an API client can use an
+      authorized access token and consumer secret to obtain a web
+      session cookie on behalf of a TripIt user.  This documentation
+      describes how that mechanism works.
+    </p>
+    <p>
+      This document assumes the reader has an understanding of the
+      OAuth protocol and has been able to access protected resources
+      on behalf of a TripIt user using either 2-legged or 3-legged
+      OAuth.
+    </p>
+    <h2>Logging In</h2>
+    <p>
+      To obtain an authenticated web session for a TripIt account that
+      has granted access to the client application simply do the
+      following.
+    </p>
+    <p>
+      Generate a set of OAuth request parameters appropriate for a
+      request to the protected resource <i>/account/session</i> on
+      either www.tripit.com or m.tripit.com.  This resource
+      is <b>only</b> available via SSL.  In other words either:
+
+      <pre>https://www.tripit.com/account/session</pre>
+      <b>or</b>
+      <pre>https://m.tripit.com/account/session</pre>
+    </p>
+    <p>
+      The set of OAuth parameters are same that need to be generated
+      for a request to access a protected resource in the API.
+      Here's an example set for a 3-legged OAuth client:
+<pre>
+oauth_consumer_key: "test_three_legged_application_key"
+oauth_nonce: "66832ae0089c1b89bc02548426f5e725"
+oauth_signature: "DFkdG1WbLkXa7jSJIQ+Q4giV68E="
+oauth_signature_method: "HMAC-SHA1"
+oauth_timestamp: "1282021595"
+oauth_token: "66832ae189c1b82bf02521ad6f5e725"
+oauth_version: "1.0"</pre>
+For a 2-legged client the set of request parameters should look like this:
+<pre>
+oauth_consumer_key: "test_two_legged_application_key"
+oauth_nonce: "66832ae0089c1b89bc02548426f5e725"
+oauth_signature: "DFkdG1WbLkXa7jSJIQ+Q4giV68E="
+oauth_signature_method: "HMAC-SHA1"
+oauth_timestamp: "1282021595"
+oauth_version: "1.0"
+xoauth_requestor_id: denmark@tripit.com</pre>
+    </p>
+    <p>
+      In addition, the client may optionally supply
+      a <i>redirect_url</i> parameter that this action will use to
+      redirect the client (if appropriate) in the response.
+      The <i>redirect_url</i> request parameter as well as the URL to
+      which the client will make a request should be included in the
+      oauth_signature calculation.  The request is a simple HTTP GET
+      request.
+    </p>
+    <h3>Example: Logging In</h3>
+    <p>
+      Here's what an example request to generate a web session looks
+      like.  Once the required OAuth and optional request parameters
+      are generated, the client issues the following GET request.  In
+      this example to: <i>https://www.tripit.com/account/session</i>
+    </p>
+    <pre>https://www.tripit.com/account/session?oauth_nonce=502235a66f0cc2b8738a850b753df3cb&oauth_timestamp=1284506766&oauth_consumer_key=ed53ff12250262d61d42add5e4c1f3e88153c158&oauth_signature_method=HMAC-SHA1&oauth_version=1.0&oauth_token=e8a3d1b9ba9a5784c8b191b92a6b4f6dfb2c902e&redirect_url=http%3A%2F%2Fwww.example.com%2F&oauth_signature=zBxE2%2Ba10%2FfA0Nm79yFKdaiBUFs%3D</pre>
+    <p>
+      In this example, the client supplied a fictitious (and optional) <i>redirect_url</i> of http://www.example.com/.  Here's what the full request looks like when viewed through Firefox's Live HTTP Headers plugin.
+    </p>
+    <pre>
+GET /account/session?oauth_nonce=502235a66f0cc2b8738a850b753df3cb&oauth_timestamp=1284506766&oauth_consumer_key=ed53ff12250262d61d42add5e4c1f3e88153c158&oauth_signature_method=HMAC-SHA1&oauth_version=1.0&oauth_token=e8a3d1b9ba9a5784c8b191b92a6b4f6dfb2c902e&redirect_url=http%3A%2F%2Fwww.example.com%2F&oauth_signature=zBxE2%2Ba10%2FfA0Nm79yFKdaiBUFs%3D HTTP/1.1
+Host: www.tripit.com
+User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.7) Gecko/20100723 Fedora/3.6.7-1.fc13 Firefox/3.6.7
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-us,en;q=0.5
+Accept-Encoding: gzip,deflate
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+Keep-Alive: 115
+Connection: keep-alive</pre>
+    <p>
+      On a successful response, the server sends the following:
+    </p>
+    <pre>
+HTTP/1.1 302 Found
+Server: nginx
+Date: Tue, 14 Sep 2010 23:26:13 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: close
+<b>Set-Cookie: session_id=98d6bgnaopkdjs3sruo23j2f2eijtro5; path=/; HttpOnly</b>
+Expires: Thu, 19 Nov 1981 08:52:00 GMT
+Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Pragma: no-cache
+Location: http://www.example.com/
+P3P: CP="DSP LAW"</pre>
+    <p>
+      Note the <i>Set-Cookie:</i> header in the response.  This cookie
+      is a session cookie that the client can use on subsequent
+      requests to without the user having to re-supply a username and
+      password.
+    </p>
+    <h2>Logging Out</h2>
+    <p>
+      To log the TripIt user out a client may do one of the following:
+      <ol>
+        <li>Make an HTTP GET request to /account/logout</li>
+        <li>Discard the session cookie</li>
+        <li>Do not make any requests for a period of 20 minutes and
+          the session will expire from inactivity</li>
+      </ol>
+    </p>
+    
+    <div id="footer">
+      <small>
+         &copy; 2006-2012, Concur Technologies, Inc. All rights reserved. TripIt &reg; is a registered trademark of Concur.
+      </small>
+    </div>
+  </body>
+</html>
