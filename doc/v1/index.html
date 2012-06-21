@@ -1,31 +1,13 @@
 <html>
   <head>
     <title>TripIt API Documentation - v1</title>
-  <style type="text/css">
-    body { 
-	font: normal 12px Arial, Helvetica, Verdana, sans-serif; 
-	padding-left: 10px;
-	padding-right: 10px;
-	color: #333333;
-	}
-    h2 { 
-	border-top: 1px solid #DDD;
-	padding-top: 20px;
-	margin-top: 10px;
-	padding-left: 10px;
- 	}
-    h3 { background-color: #ECECEC; margin: 20px; padding: 1px; }
-    h4 { margin: 25px; padding: 1px; }
-    p { margin: 20px; }
-    ul { margin: 30px; }
-    pre { background-color: #F7F7F7; padding: 1px; border: 1px solid #CCCCCC; align: center; margin: 40px; }
-    .note { background-color: #ffff00; padding: 1px; border: 1px; border-style: solid; align: center; margin: 40px; }
-    table { border: 1px; border-style: solid; padding: 0px; width: 80%; margin-left: auto; margin-right: auto; }
-    table th { border: 1px; border-style: solid; }
-    table td { border: 1px; border-style: solid; }
-  </style>
+    <LINK href="css/core.css" rel="stylesheet" type="text/css">
   </head>
   <body>
+    <!-- div style="margin-left:auto; margin-right:auto; width:968px; border:3px solid #CCCCCC;" -->
+    <!-- div style="margin: 0 auto; padding: 0px 0 40px; width: 968px; background-color: white; border-width: 0 3px; border-style: solid; border-color: #DDD;" -->
+<!-- div style="background:url(http://www.tripit.com/images/bg/top_nav.png) no-repeat; width:100%; height:73px; border-bottom: 1px solid #cccccc;" ><img src="http://www.tripit.com/images/header/logo.png" style="margin-left:10px;"></div -->
+
     <h1>TripIt API Documentation - v1</h1>
 
     <h2>Index</h2>
@@ -299,7 +281,9 @@ Pragma: no-cache
     </table>
     <p>
       The server will respond with the following in the response body:
+    </p>
       <pre>oauth_token=7d41de0eaf0d518786851a64bf7505e29177b75e&amp;oauth_token_secret=2e8c29e961d02a1aa61b916c908c90200fcdef7e</pre>
+      <p>
       These are the unauthorized access token and secret that will be
       needed to obtain user authorization in step 2.  The Consumer
       should store both values for future use.
@@ -309,10 +293,14 @@ Pragma: no-cache
       Using the unauthorized access token obtained in step 1 the
       Consumer application should redirect the user to the following
       page:
+    </p>
       <pre>https://www.tripit.com/oauth/authorize?oauth_token=&lt;oauth_token&gt;&amp;oauth_callback=&lt;oauth_callback&gt;</pre>
-      Alternatively, if you are trying to authorize on a mobile app such as an iPhone, direct the user to here:
-      <pre>https://m.tripit.com/oauth/authorize?oauth_token=&lt;oauth_token&gt;&amp;oauth_callback=&lt;oauth_callback&gt;</pre>
-      The two request parameters have the following meaning:
+      <p>
+	Alternatively, if you are trying to authorize on a mobile app such as an iPhone, direct the user to here:
+     </p>      
+<pre>https://m.tripit.com/oauth/authorize?oauth_token=&lt;oauth_token&gt;&amp;oauth_callback=&lt;oauth_callback&gt;</pre>
+      <p>
+	The two request parameters have the following meaning:
     </p>
     <p class="note">
       <b>NOTE:</b> It is extremely important that you clearly redirect
@@ -410,7 +398,9 @@ Pragma: no-cache
     </table>
     <p>
       The server will respond with the following in the response body:
+    </p>
       <pre>oauth_token=c174450a65d9d5e72de2910fed22fb8879fb1439&amp;oauth_token_secret=1d1291e53cf3f9e89c377109f0ccee244a95d273</pre>
+      <p>
       These are the authorized access token and secret that will be
       needed to make future API requests on behalf of the user that
       authorized them.  The Consumer should store both values until
@@ -1410,6 +1400,7 @@ $ cat /var/tmp/create_trip.xml
       Now, if we want to update the &lt;end_date&gt; on this Trip
       object the post data for the replace method would look something
       like this:
+    </p>
       <pre>
 $ cat /var/tmp/trip_replace.xml
 &lt;Request&gt;
@@ -1421,6 +1412,7 @@ $ cat /var/tmp/trip_replace.xml
   &lt;/Trip&gt;
 &lt;/Request&gt;
 </pre>
+    <p>
       Notice that the post data contains the data from the
       original <i>create</i> call that is not changing along with the
       new <i>end_date</i>.  This is important because the replace
@@ -2024,10 +2016,12 @@ $</pre>
    <p>
      Data from TripIt Pro's Point Tracker feature is available via the
      API as well.  The methods to obtain this are:
+   </p>
      <ul>
        <li>https://api.tripit.com/v1/list/points_program</li>
        <li>https://api.tripit.com/v1/get/points_program/id/####</li>
      </ul>
+   <p>
      and are described in the /v1/list and /v1/get documentation in
      more detail.
    </p>
@@ -2079,10 +2073,14 @@ $</pre>
     <p>
       <i>TBD - we're going to include links to Hello, World type applications here</i>
     </p>
+
+	<!-- /div -->
+
     <div id="footer">
       <small>
         &copy; 2006-2012, Concur Technologies, Inc.
       </small>
     </div>
+
   </body>
 </html>
