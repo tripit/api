@@ -18,6 +18,7 @@
         <li><a href="#resource_section">Resource URLs</a></li>
         <li><a href="#http_status_codes_section">HTTP Status Codes</a></li>
         <li><a href="#request_response_section">Request/Response Objects</a></li>
+        <li><a href="#pagination">Pagination</a></li>
         <li><a href="#pro_data_section">TripIt Pro Data</a></li>
         <li><a href="#deprecation_policy_section">Deprecation Policy</a></li>
         <li><a href="#release_notes_section">Release Notes</a></li>
@@ -1806,6 +1807,28 @@ $</pre>
     <p>
       <i>TBD - document examples of these</i>
     </p>
+    <h2 id="pagination">Pagination</h2>
+    <p>
+      The nature of a traveler's upcoming data is reasonably bounded in size by the number of future trips being planned.
+      Due to the ever-growing nature of a traveler's past data, however, pagination is turned on by default.  This behavior
+      mitigates the risk of experiencing unusually large payloads and processing times.  Pagination is active for requests
+      to the /v1/list/trip endpoint in the following circumstances:
+    </p>
+    <ol>
+      <li>request parameter 'past' == true, or</li>
+      <li>request parameter 'page_num' is specified</li>
+    </ol>
+    <p>
+      There are 3 new response elements that are declared in the <a href="https://api.tripit.com/xsd/tripit-api-res-v1.xsd">response xsd</a>:
+    </p>
+    <ul>
+      <li>&lt;page_num&gt;: current page number</li>
+      <li>&lt;page_size&gt;: number of items (ie: trips) in each page</li>
+      <li>&lt;max_page&gt;: the number of the last page</li>
+    </ul>
+    <p>
+      Clients can specify request parameter values in their requests for '<b>page_num</b>' and/or '<b>page_size</b>'.  If not specified by the client, the default value for <b>page_size</b> is 5.  Both of these request parameters must have positive integer values and the value for <b>page_num</b> must be less than or equal to the value of &lt;max_page&gt;.
+    </p>
     <h2 id="pro_data_section">Pro Data</h2>
     <p>
       Any TripIt API client that is authorized to request data from
@@ -2078,7 +2101,7 @@ $</pre>
 
     <div id="footer">
       <small>
-        &copy; 2006-2012, Concur Technologies, Inc.
+        &copy; 2006-2012, Concur Technologies, Inc. All rights reserved. TripIt &reg; is a registered trademark of Concur.
       </small>
     </div>
 
