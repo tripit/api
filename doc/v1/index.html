@@ -1063,6 +1063,19 @@ Cache-Control: private
       single <a href="#request_response_section">Request object</a> as
       the value of the request parameter <i>xml</i> in the POST body of the request.
     </p>
+
+    <h4>Handling of Date and Time data types:</h4>
+    <p>
+      The <em>xs:date</em> and <em>xs:time</em> specifications 
+      (<a href='http://www.w3schools.com/schema/schema_dtypes_date.asp' target='_blank'>
+      http://www.w3schools.com/schema/schema_dtypes_date.asp</a>) allow for timezone to be 
+      specified within the <em>xs:date</em> and <em>xs:time</em> data types respectively. TripIt, however, infers
+      the timezone of a Trip object from the geographical location of that Trip object, e.g. address
+      of a hotel, flight segment's destination, etc -- in essence, we do not make use of the timezone 
+      component in the <em>xs:date</em> and <em>xs:time</em> data types. Hence, when specifying the date/time for 
+      a Trip object, specify the date/time to be the "local" time with respect to the Trip object.
+    </p>
+
     <h4>Example:</h4>
     <p>
       Here is a sample <i>create</i> request for a Trip object:
