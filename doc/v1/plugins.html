@@ -1,0 +1,313 @@
+<html>
+  <head>
+    <title>TripIt Web Plugins</title>
+    <LINK href="css/core.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <!-- div style="margin-left:auto; margin-right:auto; width:968px; border:3px solid #CCCCCC;" -->
+    <!-- div style="margin: 0 auto; padding: 0px 0 40px; width: 968px; background-color: white; border-width: 0 3px; border-style: solid; border-color: #DDD;" -->
+<!-- div style="background:url(http://www.tripit.com/images/bg/top_nav.png) no-repeat; width:100%; height:73px; border-bottom: 1px solid #cccccc;" ><img src="http://www.tripit.com/images/header/logo.png" style="margin-left:10px;"></div -->
+    <img src="http://www.tripit.com/images/header/logo.png" />
+    <h1>TripIt Web Plugins</h1>
+
+    <h2>Index</h2>
+    <ul>
+      <li><a href="#overview_section">Overview</a></li>
+      <li><a href="#loading_section">Loading the Add-to-TripIt Plugin</a></li>
+      <li><a href="#example1_section">Example 1: Creating a hotel reservation (Lodging) object</a></li>
+      <li><a href="#example2_section">Example 2: Creating a car reservation (Transport) object</a></li>
+      <li><a href="#js_api_section">JavaScript API</a></li>
+
+    </ul>
+
+    <h2>Add-to-TripIt Button</h2>
+    <div class="plugin-image">
+      <img src="images/a2t_example.png" border=1 />
+    </div>
+    
+    <h3 id="overview_section">Overview</h3>
+    <p>
+      The Add-to-TripIt button allow you to quickly import trips and trip objects for users,
+      without having to go through a complete OAuth integration with the TripIt
+      API.
+    </p>
+    <p>
+      Currently the following trip objects are supported for importing through this button:
+    </p>
+    <p>
+      <ul>
+        <li>ActivityObject</li>
+        <li>LodgingObject</li>
+        <li>RestaurantObject</li>
+        <li>TransportObject</li>
+      </ul>
+    </p>
+
+    <h3 id="loading_section">Loading the Add-to-TripIt plugin</h3>
+    <h4>Step 1</h4>
+    <ul>
+      <li>
+        <a href="https://www.tripit.com/developer" target="_blank">Sign up for a developer API key</a>, if you don't already have one.
+      </li>
+      <li>
+        Under the 'TripIt Plugins' section when viewing/editing your API application, enter the domain where the Add-to-TripIt plugin will be used.
+      </li>
+    </ul>
+    <h4>Step 2</h4>
+    <ul>
+      <li>
+        After saving your API application, click on the 'Get the plugin code' button. The instructions should be similar to the two steps below:
+
+        <ol>
+          <li>Add the TripIt JavaScript SDK in your page once, ideally right after the beginning of the &lt;body&gt; tag:
+            <pre>
+window.tiAsyncInit = function() {
+    TripIt.init({
+        'api_key':'YOUR_API_KEY',
+        'domain':'YOUR_DOMAIN'
+    });
+
+    // Your code that uses the TripIt SDK goes here...
+
+};
+
+(function(d){
+    var js, id = 'tripit-jssdk', ref = d.getElementsByTagName('script')[0];
+    if (d.getElementById(id)) {return;}
+    js = d.createElement('script'); js.id = id; js.async = true;
+    js.src = "//www.tripit.com/js/sdk/tripit_sdk.js";
+    ref.parentNode.insertBefore(js, ref);
+}(document));</pre>
+          </li>
+          <li>Place the code for your plugin wherever you want the plugin to appear on your page.
+            <pre>
+&lt;div id="add-to-tripit-plugin"&gt;&lt;/div&gt;</pre>
+          </li>
+        </ol>
+
+      </li>
+    </ul>
+    <h4>Step 3</h4>
+    <ul>
+      <li>
+        Follow the JavaScript API functions to instantiate the Add-to-TripIt plugin with the relevant trip object data. Place your code within the window.tiAsycInit() function defined above.
+      </li>
+    </ul>
+
+    <h3 id="example1_section">Example 1: Creating a hotel reservation (Lodging) object</h3>
+
+    <ol>
+      <li>Add the TripIt JavaScript SDK and your custom code in your page once, ideally right after the beginning of the &lt;body&gt; tag:
+        <pre>
+window.tiAsyncInit = function() {
+    TripIt.init({
+        'api_key':'YOUR_API_KEY',
+        'domain':'YOUR_DOMAIN'
+    });
+
+    // Your code that uses the TripIt SDK goes here...
+    
+    // Creating an AddToTripIt widget
+    var a2t = TripIt.create('addToTripitWidget');
+
+    // Creating a Lodging Object inside AddToTripIt widget
+    var lodging = a2t.create('lodging');
+    
+    // Start/End date/time
+    var startDateTime = new Date(2012, 07, 14, 11, 00); // On 07/14/2012, 11:00
+    lodging.setStartDateTime(startDateTime);
+    var endDateTime = new Date(2012, 07, 16, 19, 00); // On 07/16/2012, 19:00
+    lodging.setEndDateTime(endDateTime);
+    
+    // Address
+    var address1 = a2t.create('address');
+    address1.setAddrLine1('500 Treat Ave');
+    address1.setAddrLine2('Suite 100');
+    address1.setCity('San Francisco');
+    address1.setState('CA');
+    address1.setCountry('USA');
+    lodging.setAddress(address1);
+    
+    // Travelers
+    var person1 = a2t.create('traveler');
+    person1.setFirstName('Andy');
+    person1.setLastName('Denmark');
+    var person2 = a2t.create('traveler');
+    person2.setFirstName('Thor');
+    lodging.addGuest(person1);
+    lodging.addGuest(person2);
+
+    lodging.setNumberGuests("2");
+    lodging.setNumberRooms("1");
+    lodging.setRoomType("suite");
+
+    // All done, so now initialize the A2T button to be rendered.
+    TripIt.initializeWidget(a2t, function(data) {
+        console.log('CLIENT: status obtained: ');
+        console.log(data);
+    });
+
+};
+
+(function(d){
+    var js, id = 'tripit-jssdk', ref = d.getElementsByTagName('script')[0];
+    if (d.getElementById(id)) {return;}
+    js = d.createElement('script'); js.id = id; js.async = true;
+    js.src = "//www.tripit.com/js/sdk/tripit_sdk.js";
+    ref.parentNode.insertBefore(js, ref);
+}(document));</pre>
+      </li>
+      <li>Place the code for your plugin wherever you want the plugin to appear on your page.
+        <pre>
+&lt;div id="add-to-tripit-plugin"&gt;&lt;/div&gt;</pre>
+      </li>
+    </ol>
+
+    <h3 id="example2_section">Example 2: Creating a car reservation (Transport) object</h3>
+
+    <ol>
+      <li>Add the TripIt JavaScript SDK and your custom code in your page once, ideally right after the beginning of the &lt;body&gt; tag:
+        <pre>
+window.tiAsyncInit = function() {
+    TripIt.init({
+        'api_key':'YOUR_API_KEY',
+        'domain':'YOUR_DOMAIN'
+    });
+
+    // Your code that uses the TripIt SDK goes here...
+    
+    // Creating an AddToTripIt widget
+    var a2t = TripIt.create('addToTripitWidget');
+
+    // Transport Object
+    var transport = a2t.create('transport');
+
+    // Start/End date/time
+    var startDateTime = new Date(2012, 08, 14, 11, 00); // On 08/14/2012, 11:00
+    transport.setStartDateTime(startDateTime);
+    var endDateTime = new Date(2012, 08, 16, 19, 00); // On 08/16/2012, 19:00
+    transport.setEndDateTime(endDateTime);
+
+    // StartLocationAddress
+    var address1 = a2t.create('address');
+    address1.setAddrLine1('200 Treat Ave');
+    address1.setAddrLine2('Suite 100000');
+    address1.setCity('San Francisco');
+    address1.setState('CA');
+    address1.setCountry('USA');
+    transport.setStartLocationAddress(address1);
+    
+    // EndLocationAddress
+    var address2 = a2t.create('address');
+    address2.setAddrLine1('endLocation');
+    address2.setAddrLine2('Esdfsdf');
+    address2.setCity('St Paul');
+    address2.setState('MN');
+    address2.setCountry('USA');
+    transport.setEndLocationAddress(address2);
+    
+    // start/endLocationName
+    transport.setStartLocationName("startLoc changed");
+    transport.setEndLocationName("endgjkljhkjhkjed");
+    
+    // transport.setConfirmationNumber("6");
+
+    // All done, so now initialize the A2T button to be rendered.
+    TripIt.initializeWidget(a2t, function(data) {
+        console.log('CLIENT: status obtained: ');
+        console.log(data);
+    });
+
+};
+
+(function(d){
+    var js, id = 'tripit-jssdk', ref = d.getElementsByTagName('script')[0];
+    if (d.getElementById(id)) {return;}
+    js = d.createElement('script'); js.id = id; js.async = true;
+    js.src = "//www.tripit.com/js/sdk/tripit_sdk.js";
+    ref.parentNode.insertBefore(js, ref);
+}(document));</pre>
+      </li>
+      <li>Place the code for your plugin wherever you want the plugin to appear on your page.
+        <pre>
+&lt;div id="add-to-tripit-plugin"&gt;&lt;/div&gt;</pre>
+      </li>
+    </ol>
+
+    <h3 id="js_api_section">JavaScript API</h3>
+
+    <table width="100%" height="400px" cellpadding="5px" cellspacing="5px">
+      <tr>
+        <td class="noborder" width="130px" valign="top">
+          <font size="+1" class="FrameHeadingFont">
+            <b>Plugin &amp; SDK</b>
+          </font>
+          <br />
+
+          <table border="0" width="100%" summary="" class="noborder">
+            <tbody>
+              <tr>
+                <td nowrap="">
+                  <font class="FrameItemFont">
+                    <a href="js_sdk/addtotripit_object.html" target="methodsummary_iframe">AddToTripit</a>
+                    <br>
+                    <a href="js_sdk/tripit_object.html" target="methodsummary_iframe">TripIt</a>
+                  </font>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <br><br>
+
+          <font size="+1" class="FrameHeadingFont">
+            <b>All trip objects</b>
+          </font>
+          <br />
+
+          <table border="0" width="100%" summary="" class="noborder">
+            <tbody>
+              <tr>
+                <td nowrap="">
+                  <font class="FrameItemFont">
+                    <a href="js_sdk/activity_object.html" target="methodsummary_iframe">Activity</a>
+                    <br>
+                    <a href="js_sdk/address_object.html" target="methodsummary_iframe">Address</a>
+                    <br>
+                    <a href="js_sdk/lodging_object.html" target="methodsummary_iframe">Lodging</a>
+                    <br>
+                    <a href="js_sdk/restaurant_object.html" target="methodsummary_iframe">Restaurant</a>
+                    <br>
+                    <a href="js_sdk/transport_object.html" target="methodsummary_iframe">Transport</a>
+                    <br>
+                    <a href="js_sdk/traveler_object.html" target="methodsummary_iframe">Traveler</a>
+                  </font>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        
+        </td>
+
+        <td></td>
+
+        <td class="noborder" valign="top">
+          <iframe src="js_sdk/addtotripit_object.html" id="methodsummary_iframe" width="100%" height="100%" frameBorder="0" />
+        </td>
+      </tr>
+    </table>
+
+    
+
+
+
+	<!-- /div -->
+
+    <div id="footer">
+      <small>
+        &copy; 2006-2012, Concur Technologies, Inc. All rights reserved. TripIt &reg; is a registered trademark of Concur.
+      </small>
+    </div>
+
+  </body>
+</html>
