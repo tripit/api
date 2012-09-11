@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-body {
+body, tbody {
     font: normal 12px Arial, Helvetica, Verdana, sans-serif; 
     padding-left: 10px;
     padding-right: 10px;
@@ -64,6 +64,9 @@ table th {
 table td { 
     border: 1px; 
     border-style: solid; 
+}
+table.sdk {
+    width: 100%;
 }
 .noborder, .noborder td {
     border: 0;

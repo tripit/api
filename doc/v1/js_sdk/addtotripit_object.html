@@ -1,71 +1,80 @@
-<table border="1" width="100%" cellpadding="3" cellspacing="0" summary="">
-  <tbody>
-    <tr bgcolor="#CCCCFF" class="TableHeadingColor">
-      <th align="left" colspan="2">
-        <font size="+2"><b>Method Summary - AddToTripIt</b></font>
-      </th>
-    </tr>
+<html>
+  <head>
+    <title>TripIt Web Plugins</title>
+    <LINK href="../css/core.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+
+    <table border="1" width="100%" cellpadding="3" cellspacing="0" summary="" class="sdk">
+      <tbody>
+        <tr bgcolor="#CCCCFF" class="TableHeadingColor">
+          <th align="left" colspan="2">
+            <font size="+2"><b>Method Summary - AddToTripIt</b></font>
+          </th>
+        </tr>
+        
+        <tr bgcolor="white" class="TableRowColor">
+          <td align="right" valign="top" width="1%">
+            <font size="-1">
+              <code>Object</code>
+            </font>
+          </td>
+          <td>
+            <code>
+              <b>create</b>(String objectType)
+            </code>
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates and returns a new trip object of the given objectType. The object types supported are "<a href="activity_object.html">activity</a>", "<a href="address_object.html">address</a>", "<a href="lodging_object.html">lodging</a>", "<a href="restaurant_object.html">restaurant</a>", "<a href="transport_object.html">transport</a>", and "<a href="traveler_object.html">traveler</a>".
+          </td>
+        </tr>
+
+
+        <tr bgcolor="white" class="TableRowColor">
+          <td align="right" valign="top" width="1%">
+            <font size="-1">
+              <code>Object</code>
+            </font>
+          </td>
+          <td>
+            <code>
+              <b>getPayload</b>()
+            </code>
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the trip object that will be saved in TripIt when the Add-to-TripIt button is clicked.
+          </td>
+        </tr>
+
+        <tr bgcolor="white" class="TableRowColor">
+          <td align="right" valign="top" width="1%">
+            <font size="-1">
+              <code></code>
+            </font>
+          </td>
+          <td>
+            <code>
+              <b>removePayload</b>()
+            </code>
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes any trip object associated with the Add-to-TripIt button.
+          </td>
+        </tr>
+
+        <tr bgcolor="white" class="TableRowColor">
+          <td align="right" valign="top" width="1%">
+            <font size="-1">
+              <code></code>
+            </font>
+          </td>
+          <td>
+            <code>
+              <b>setPayload</b>(Object tripObject)
+            </code>
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the trip object that will be saved in TripIt when the Add-to-TripIt button is clicked. The tripObject parameter can be of object type <a href="activity_object.html">Activity</a>, <a href="lodging_object.html">Lodging</a>, <a href="restaurant_object.html">Restaurant</a>, or <a href="transport_object.html">Transport</a>.
+          </td>
+        </tr>
+      </tbody>
+    </table>
     
-    <tr bgcolor="white" class="TableRowColor">
-      <td align="right" valign="top" width="1%">
-        <font size="-1">
-          <code>Object</code>
-        </font>
-      </td>
-      <td>
-        <code>
-          <b>create</b>(String objectType)
-        </code>
-        <br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates and returns a new trip object of the given objectType. The object types supported are "<a href="activity_object.html">activity</a>", "<a href="address_object.html">address</a>", "<a href="lodging_object.html">lodging</a>", "<a href="restaurant_object.html">restaurant</a>", "<a href="transport_object.html">transport</a>", and "<a href="traveler_object.html">traveler</a>".
-      </td>
-    </tr>
-
-
-    <tr bgcolor="white" class="TableRowColor">
-      <td align="right" valign="top" width="1%">
-        <font size="-1">
-          <code>Object</code>
-        </font>
-      </td>
-      <td>
-        <code>
-          <b>getPayload</b>()
-        </code>
-        <br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the trip object that will be saved in TripIt when the Add-to-TripIt button is clicked.
-      </td>
-    </tr>
-
-    <tr bgcolor="white" class="TableRowColor">
-      <td align="right" valign="top" width="1%">
-        <font size="-1">
-          <code></code>
-        </font>
-      </td>
-      <td>
-        <code>
-          <b>removePayload</b>()
-        </code>
-        <br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes any trip object associated with the Add-to-TripIt button.
-      </td>
-    </tr>
-
-    <tr bgcolor="white" class="TableRowColor">
-      <td align="right" valign="top" width="1%">
-        <font size="-1">
-          <code></code>
-        </font>
-      </td>
-      <td>
-        <code>
-          <b>setPayload</b>(Object tripObject)
-        </code>
-        <br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the trip object that will be saved in TripIt when the Add-to-TripIt button is clicked. The tripObject parameter can be of object type <a href="activity_object.html">Activity</a>, <a href="lodging_object.html">Lodging</a>, <a href="restaurant_object.html">Restaurant</a>, or <a href="transport_object.html">Transport</a>.
-      </td>
-    </tr>
-
-  </tbody>
-</table>
+  </body>
+</html>

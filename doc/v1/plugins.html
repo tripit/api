@@ -27,12 +27,12 @@
     
     <h3 id="overview_section">Overview</h3>
     <p>
-      The Add-to-TripIt button allow you to quickly import trips and trip objects for users,
+      The Add-to-TripIt button allow you to quickly import trips and travel objects for users,
       without having to go through a complete OAuth integration with the TripIt
       API.
     </p>
     <p>
-      Currently the following trip objects are supported for importing through this button:
+      Currently the following travel objects are supported for importing through this button:
     </p>
     <p>
       <ul>
@@ -79,7 +79,7 @@ window.tiAsyncInit = function() {
     ref.parentNode.insertBefore(js, ref);
 }(document));</pre>
           </li>
-          <li>Place the code for your plugin wherever you want the plugin to appear on your page.
+          <li>Place the code for your plugin wherever you want the plugin to appear on your purchase confirmation page.
             <pre>
 &lt;div id="add-to-tripit-plugin"&gt;&lt;/div&gt;</pre>
           </li>
@@ -90,7 +90,7 @@ window.tiAsyncInit = function() {
     <h4>Step 3</h4>
     <ul>
       <li>
-        Follow the JavaScript API functions to instantiate the Add-to-TripIt plugin with the relevant trip object data. Place your code within the window.tiAsycInit() function defined above.
+        Follow the JavaScript API functions to instantiate the Add-to-TripIt plugin with the relevant travel object data. Place your code within the window.tiAsycInit() function defined above.
       </li>
     </ul>
 
@@ -113,13 +113,13 @@ window.tiAsyncInit = function() {
     // Creating a Lodging Object inside AddToTripIt widget
     var lodging = a2t.create('lodging');
     
-    // Start/End date/time
-    var startDateTime = new Date(2012, 07, 14, 11, 00); // On 07/14/2012, 11:00
+    // Check-in and check-out date/time
+    var startDateTime = new Date(2012, 07, 14, 11, 00); // On 08/14/2012, 11:00
     lodging.setStartDateTime(startDateTime);
-    var endDateTime = new Date(2012, 07, 16, 19, 00); // On 07/16/2012, 19:00
+    var endDateTime = new Date(2012, 07, 16, 19, 00); // On 08/16/2012, 19:00
     lodging.setEndDateTime(endDateTime);
     
-    // Address
+    // Hotel address
     var address1 = a2t.create('address');
     address1.setAddrLine1('500 Treat Ave');
     address1.setAddrLine2('Suite 100');
@@ -128,7 +128,7 @@ window.tiAsyncInit = function() {
     address1.setCountry('USA');
     lodging.setAddress(address1);
     
-    // Travelers
+    // Guests
     var person1 = a2t.create('traveler');
     person1.setFirstName('Andy');
     person1.setLastName('Denmark');
@@ -137,9 +137,9 @@ window.tiAsyncInit = function() {
     lodging.addGuest(person1);
     lodging.addGuest(person2);
 
-    lodging.setNumberGuests("2");
-    lodging.setNumberRooms("1");
-    lodging.setRoomType("suite");
+    lodging.setNumberGuests('2');
+    lodging.setNumberRooms('1');
+    lodging.setRoomType('suite');
 
     // All done, so now initialize the A2T button to be rendered.
     TripIt.initializeWidget(a2t, function(data) {
@@ -182,35 +182,34 @@ window.tiAsyncInit = function() {
     // Transport Object
     var transport = a2t.create('transport');
 
-    // Start/End date/time
-    var startDateTime = new Date(2012, 08, 14, 11, 00); // On 08/14/2012, 11:00
+    // Car rental start and end date/time
+    var startDateTime = new Date(2012, 08, 14, 11, 00); // On 09/14/2012, 11:00
     transport.setStartDateTime(startDateTime);
-    var endDateTime = new Date(2012, 08, 16, 19, 00); // On 08/16/2012, 19:00
+    var endDateTime = new Date(2012, 08, 16, 19, 00); // On 09/16/2012, 19:00
     transport.setEndDateTime(endDateTime);
 
-    // StartLocationAddress
+    // Rental start location address
     var address1 = a2t.create('address');
-    address1.setAddrLine1('200 Treat Ave');
-    address1.setAddrLine2('Suite 100000');
-    address1.setCity('San Francisco');
+    address1.setAddrLine1('Oakland International Airport');
+    address1.setAddrLine2('100 Airport Rd');
+    address1.setCity('Oakland');
     address1.setState('CA');
     address1.setCountry('USA');
     transport.setStartLocationAddress(address1);
     
-    // EndLocationAddress
+    // Rental end location address
     var address2 = a2t.create('address');
-    address2.setAddrLine1('endLocation');
-    address2.setAddrLine2('Esdfsdf');
-    address2.setCity('St Paul');
-    address2.setState('MN');
+    address2.setAddrLine1('San Francisco International Airport');
+    address2.setCity('San Francisco');
+    address2.setState('CA');
     address2.setCountry('USA');
     transport.setEndLocationAddress(address2);
     
-    // start/endLocationName
-    transport.setStartLocationName("startLoc changed");
-    transport.setEndLocationName("endgjkljhkjhkjed");
+    // start/end Location Name
+    transport.setStartLocationName('Oakland International Airport');
+    transport.setEndLocationName('San Francisco International Airport');
     
-    // transport.setConfirmationNumber("6");
+    // transport.setConfirmationNumber('6');
 
     // All done, so now initialize the A2T button to be rendered.
     TripIt.initializeWidget(a2t, function(data) {
@@ -235,6 +234,8 @@ window.tiAsyncInit = function() {
     </ol>
 
     <h3 id="js_api_section">JavaScript API</h3>
+
+    <p>Below is the JavaScript API to use for the Add-to-TripIt plugin.</p>
 
     <table width="100%" height="400px" cellpadding="5px" cellspacing="5px">
       <tr>
@@ -261,7 +262,7 @@ window.tiAsyncInit = function() {
           <br><br>
 
           <font size="+1" class="FrameHeadingFont">
-            <b>All trip objects</b>
+            <b>All travel objects</b>
           </font>
           <br />
 
