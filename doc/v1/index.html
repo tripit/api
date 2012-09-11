@@ -11,19 +11,27 @@
     <h1>TripIt API Documentation - v1</h1>
 
     <h2>Index</h2>
-      <ul>
-        <li><a href="#overview_section">Overview</a></li>
-        <li><a href="#authentication_section">Authentication</a></li>
-        <li><a href="#encoding_section">Encoding</a></li>
-        <li><a href="#resource_section">Resource URLs</a></li>
-        <li><a href="#http_status_codes_section">HTTP Status Codes</a></li>
-        <li><a href="#request_response_section">Request/Response Objects</a></li>
-        <li><a href="#pagination">Pagination</a></li>
-        <li><a href="#pro_data_section">TripIt Pro Data</a></li>
-        <li><a href="#deprecation_policy_section">Deprecation Policy</a></li>
-        <li><a href="#release_notes_section">Release Notes</a></li>
-        <li><a href="#examples_section">Example</a></li>
-      </ul>
+    <ul>
+      <li><a href="#overview_section">Overview</a></li>
+      <li><a href="#authentication_section">Authentication</a></li>
+      <li><a href="#encoding_section">Encoding</a></li>
+      <li><a href="#resource_section">Resource URLs and Methods</a>
+        <ul class="inner-ul">
+          <li><a href="#method_get">get</li>
+          <li><a href="#method_list">list</li>
+          <li><a href="#method_create">create</li>
+          <li><a href="#method_replace">replace</li>
+          <li><a href="#method_delete">delete</li>
+        </ul>
+      </li>
+      <li><a href="#http_status_codes_section">HTTP Status Codes</a></li>
+      <li><a href="#request_response_section">Request/Response Objects</a></li>
+      <li><a href="#pagination">Pagination</a></li>
+      <li><a href="#pro_data_section">TripIt Pro Data</a></li>
+      <li><a href="#deprecation_policy_section">Deprecation Policy</a></li>
+      <li><a href="#release_notes_section">Release Notes</a></li>
+      <li><a href="#examples_section">Example</a></li>
+    </ul>
 
     <h2 id="overview_section">Overview</h2>
     <p>
@@ -513,7 +521,7 @@ Pragma: no-cache
       necessary to wrap the JSON in a {"Request" : ... }.  Simply send
       the object.
     </p>
-    <h3>get</h3>
+    <h3 id="method_get">get</h3>
     <p>
       A <i>get</i> request is used to retrieve a specific object from
       the TripIt API given its TripIt object ID.  Since <i>get</i>
@@ -768,7 +776,7 @@ Cache-Control: private
 $</pre>
     </p>
 
-    <h3>list</h3>
+    <h3 id="method_list">list</h3>
     <p>
       A <i>list</i> request is used to retrieve multiple objects given
       an object type and set of filter parameters.  Since <i>list</i>
@@ -1050,7 +1058,7 @@ Cache-Control: private
 &lt;/AirObject&gt;
 &lt;/Response&gt;
 </pre>
-    <h3>create</h3>
+    <h3 id="method_create">create</h3>
     <p>
       A <i>create</i> request is used to create new objects.  To
       create objects, make an HTTP POST request to the following URL:
@@ -1312,7 +1320,7 @@ $</pre>
         <li>All the DateTime objects now have &lt;timezone&gt; and &lt;utc_offset&gt; as the TripIt platform was able to figure that out.</li>
       </ul>
     </p>
-    <h3>replace</h3>
+    <h3 id="method_replace">replace</h3>
     <p>
       A <i>replace</i> request is used to replace existing objects in
       a TripIt account.  After the object is replaced it will get the
@@ -1624,7 +1632,7 @@ Cache-Control: private
   &lt;/Response&gt;
 </pre>
     </p>
-    <h3>delete</h3>
+    <h3 id="method_delete">delete</h3>
     <p>
       A <i>delete</i> request is used to delete existing objects.  To
       delete an object, make an HTTP GET request to the following URL:
