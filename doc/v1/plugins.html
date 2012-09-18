@@ -20,19 +20,17 @@
 
     </ul>
 
-    <h2>Add-to-TripIt Button</h2>
+    <h2>Add-to-TripIt Plugin</h2>
     <div class="plugin-image">
       <img src="images/a2t_example.png" border=1 />
     </div>
     
     <h3 id="overview_section">Overview</h3>
     <p>
-      The Add-to-TripIt button allow you to quickly import trips and travel objects for users,
-      without having to go through a complete OAuth integration with the TripIt
-      API.
+      The Add-to-TripIt plugin allows you to quickly import travel objects into TripIt without the need for a full TripIt API integration utilizing OAuth.
     </p>
     <p>
-      Currently the following travel objects are supported for importing through this button:
+      Currently the following travel objects are supported:
     </p>
     <p>
       <ul>
@@ -47,7 +45,7 @@
     <h4>Step 1</h4>
     <ul>
       <li>
-        <a href="https://www.tripit.com/developer" target="_blank">Sign up for a developer API key</a>, if you don't already have one.
+        <a href="https://www.tripit.com/developer" target="_blank">Sign up for a developer API key</a>.
       </li>
       <li>
         Under the 'TripIt Plugins' section when viewing/editing your API application, enter the domain where the Add-to-TripIt plugin will be used.
@@ -58,7 +56,7 @@
       <li>
         After saving your API application, click on the 'Get the plugin code' button. The instructions should be similar to the two steps below:
 
-        <ol>
+        <ol type="a">
           <li>Add the TripIt JavaScript SDK in your page once, ideally right after the beginning of the &lt;body&gt; tag:
             <pre>
 window.tiAsyncInit = function() {
@@ -79,7 +77,7 @@ window.tiAsyncInit = function() {
     ref.parentNode.insertBefore(js, ref);
 }(document));</pre>
           </li>
-          <li>Place the code for your plugin wherever you want the plugin to appear on your purchase confirmation page.
+          <li>Place the following code wherever you want the plugin to appear on your purchase confirmation page.
             <pre>
 &lt;div id="add-to-tripit-plugin"&gt;&lt;/div&gt;</pre>
           </li>
@@ -107,10 +105,10 @@ window.tiAsyncInit = function() {
 
     // Your code that uses the TripIt SDK goes here...
     
-    // Creating an AddToTripIt widget
-    var a2t = TripIt.create('addToTripitWidget');
+    // Creating an AddToTripIt plugin object
+    var a2t = TripIt.create('addToTripIt')
 
-    // Creating a Lodging Object inside AddToTripIt widget
+    // Creating a Lodging Object inside AddToTripIt object
     var lodging = a2t.create('lodging');
     
     // Check-in and check-out date/time
@@ -141,8 +139,8 @@ window.tiAsyncInit = function() {
     lodging.setNumberRooms('1');
     lodging.setRoomType('suite');
 
-    // All done, so now initialize the A2T button to be rendered.
-    TripIt.initializeWidget(a2t, function(data) {
+    // All done, so now initialize the A2T button to be rendered; pass callback function as well.
+    TripIt.initializePlugin(a2t, function(data) {
         console.log('CLIENT: status obtained: ');
         console.log(data);
     });
@@ -157,7 +155,7 @@ window.tiAsyncInit = function() {
     ref.parentNode.insertBefore(js, ref);
 }(document));</pre>
       </li>
-      <li>Place the code for your plugin wherever you want the plugin to appear on your page.
+      <li>Place the following code wherever you want the plugin to appear on your purchase confirmation page.
         <pre>
 &lt;div id="add-to-tripit-plugin"&gt;&lt;/div&gt;</pre>
       </li>
@@ -176,8 +174,8 @@ window.tiAsyncInit = function() {
 
     // Your code that uses the TripIt SDK goes here...
     
-    // Creating an AddToTripIt widget
-    var a2t = TripIt.create('addToTripitWidget');
+    // Creating an AddToTripIt plugin object
+    var a2t = TripIt.create('addToTripIt')
 
     // Transport Object
     var transport = a2t.create('transport');
@@ -212,7 +210,7 @@ window.tiAsyncInit = function() {
     // transport.setConfirmationNumber('6');
 
     // All done, so now initialize the A2T button to be rendered.
-    TripIt.initializeWidget(a2t, function(data) {
+    TripIt.initializePlugin(a2t, function(data) {
         console.log('CLIENT: status obtained: ');
         console.log(data);
     });
@@ -227,7 +225,7 @@ window.tiAsyncInit = function() {
     ref.parentNode.insertBefore(js, ref);
 }(document));</pre>
       </li>
-      <li>Place the code for your plugin wherever you want the plugin to appear on your page.
+      <li>Place the following code wherever you want the plugin to appear on your purchase confirmation page.
         <pre>
 &lt;div id="add-to-tripit-plugin"&gt;&lt;/div&gt;</pre>
       </li>

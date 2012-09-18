@@ -32,7 +32,12 @@ p {
     margin: 20px; 
 }
 ul { 
-    margin: 30px; 
+    margin-left: 30px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+ol {
+    margin-top: 15px;
 }
 pre { 
     background-color: #F7F7F7; 
