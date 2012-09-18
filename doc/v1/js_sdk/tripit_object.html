@@ -1,0 +1,65 @@
+<html>
+  <head>
+    <title>TripIt Web Plugins</title>
+    <LINK href="../css/core.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+
+    <table border="1" width="100%" cellpadding="3" cellspacing="0" summary="" class="sdk">
+      <tbody>
+        <tr bgcolor="#CCCCFF" class="TableHeadingColor">
+          <th align="left" colspan="2">
+            <font size="+2"><b>Method Summary - TripIt</b></font>
+          </th>
+        </tr>
+
+        <tr bgcolor="white" class="TableRowColor">
+          <td align="right" valign="top" width="1%">
+            <font size="-1">
+              <code>Object</code>
+            </font>
+          </td>
+          <td>
+            <code>
+              <b>create</b>(String objectType)
+            </code>
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates and returns a new plugin object of the given objectType. Currently the only object type supported is "<a href="addtotripit_object.html">addToTripIt</a>".
+          </td>
+        </tr>
+        
+        <tr bgcolor="white" class="TableRowColor">
+          <td align="right" valign="top" width="1%">
+            <!-- <font size="-1">
+              <code>&nbsp;<a href="../../java/applet/Applet.html" title="class in java.applet">Applet</a></code>
+            </font> -->
+          </td>
+          <td>
+            <code>
+              <b>init</b>(Object {api_key, domain})
+            </code>
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes the TripIt SDK object, given the API key and domain registered for the Add-to-TripIt plugin.
+          </td>
+        </tr>
+
+        <tr bgcolor="white" class="TableRowColor">
+          <td align="right" valign="top" width="1%">
+            <font size="-1">
+              <code>Integer</code>
+            </font>
+          </td>
+          <td>
+            <code>
+              <b>initializePlugin</b>(Object plugin, Function callback)
+            </code>
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes the plugin by rendering the IFrame for the plugin. If a callback function is specified, it will be executed when the plugin finishes performing a user-initiated action.
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+    
+  </body>
+</html>
