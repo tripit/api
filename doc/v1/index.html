@@ -1830,15 +1830,16 @@ $</pre>
     </p>
     <h2 id="pagination">Pagination</h2>
     <p>
-      The nature of a traveler's upcoming data is reasonably bounded in size by the number of future trips being planned.
-      Due to the ever-growing nature of a traveler's past data, however, pagination is turned on by default.  This behavior
-      mitigates the risk of experiencing unusually large payloads and processing times.  Pagination is active for requests
-      to the /v1/list/trip endpoint in the following circumstances:
+      Pagination is activated for requests to the <b>/v1/list/trip</b> endpoint in any of the following three circumstances:
     </p>
     <ol>
-      <li>request parameter 'past' == true, or</li>
-      <li>request parameter 'page_num' is specified</li>
+      <li>request parameter 'past' == true (requesting past trip data), or</li>
+      <li>request parameter 'page_num' is specified, or</li>
+      <li>for upcoming trips request, the set of upcoming trips is greater than 50 trips.</li>
     </ol>
+    <p>
+      Clients can specify request parameter values in their requests for '<b>page_num</b>' and/or '<b>page_size</b>'.  If not specified by the client, the <b>default value for page_size is 5</b>.  Both of these request parameters must have positive integer values and the value for <b>page_num</b> must be less than or equal to the value of &lt;max_page&gt; (defined below).
+    </p>
     <p>
       There are 3 new response elements that are declared in the <a href="https://api.tripit.com/xsd/tripit-api-res-v1.xsd">response xsd</a>:
     </p>
@@ -1847,9 +1848,7 @@ $</pre>
       <li>&lt;page_size&gt;: number of items (ie: trips) in each page</li>
       <li>&lt;max_page&gt;: the number of the last page</li>
     </ul>
-    <p>
-      Clients can specify request parameter values in their requests for '<b>page_num</b>' and/or '<b>page_size</b>'.  If not specified by the client, the default value for <b>page_size</b> is 5.  Both of these request parameters must have positive integer values and the value for <b>page_num</b> must be less than or equal to the value of &lt;max_page&gt;.
-    </p>
+    
     <h2 id="pro_data_section">Pro Data</h2>
     <p>
       Any TripIt API client that is authorized to request data from
