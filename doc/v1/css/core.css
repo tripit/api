@@ -85,3 +85,14 @@ table.sdk {
     margin-right: auto;
     width: 600px;
 }
+
+#methodsummary {
+    overflow: auto;
+    height: 390px;
+}
+
+.FrameItemFont a {
+    text-decoration: underline;
+    cursor: pointer;
+    color: -webkit-link;
+}
