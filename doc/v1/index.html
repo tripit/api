@@ -14,6 +14,9 @@
     <ul>
       <li><a href="#overview_section">Overview</a></li>
       <li><a href="#authentication_section">Authentication</a></li>
+        <ul class="inner-ul">
+          <li><a href="#oauth_detailed_error">OAuth Detailed Error Codes</li>
+        </ul>
       <li><a href="#encoding_section">Encoding</a></li>
       <li><a href="#resource_section">Resource URLs and Methods</a>
         <ul class="inner-ul">
@@ -485,6 +488,26 @@ Pragma: no-cache
       logged in to TripIt via the web.
     </p>
 
+    <h3 id="oauth_detailed_error">OAuth Detailed Error Codes</h3>
+    <p>
+      Here is a description for error codes that are thrown during the OAuth process: 
+    </p>
+    <ul>
+      <li>100 - General error</li>
+      <li>101.1 - version not supported</li>
+      <li>101.2 - signature method not supported</li>
+      <li>102.1 - consumer key is missing</li>
+      <li>102.2 - invalid consumer key</li>
+      <li>102.3 - consumer key does not match key for token</li>
+      <li>102.4 - consumer is not active</li>
+      <li>103.1 - nonce already used</li>
+      <li>104.1 - invalid signature</li>
+      <li>105.1 - invalid timestamp</li>
+      <li>105.2 - timestamp out of range</li>
+      <li>105.3 - expired timestamp</li>
+      <li>106.1 - invalid token key</li>
+      <li>106.2 - request token not found</li>
+    </ul>
     <h2 id="encoding_section">Encoding</h2>
     <p>
       The TripIt API expects all data to be encoded
