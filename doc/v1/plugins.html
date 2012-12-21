@@ -25,7 +25,7 @@
       <li><a href="#overview_section">Overview</a></li>
       <li><a href="#loading_section">Loading the Add-to-TripIt Plugin</a></li>
       <li><a href="#example1_section">Example 1: Creating a hotel reservation (Lodging) object</a></li>
-      <li><a href="#example2_section">Example 2: Creating a car reservation (Transport) object</a></li>
+      <li><a href="#example2_section">Example 2: Creating a shuttle reservation (Transport) object</a></li>
       <li><a href="#js_api_section">JavaScript API</a></li>
 
     </ul>
@@ -171,7 +171,7 @@ window.tiAsyncInit = function() {
       </li>
     </ol>
 
-    <h3 id="example2_section">Example 2: Creating a car reservation (Transport) object</h3>
+    <h3 id="example2_section">Example 2: Creating a shuttle reservation (Transport) object</h3>
 
     <ol>
       <li>Add the TripIt JavaScript SDK and your custom code in your page once, ideally right after the beginning of the &lt;body&gt; tag:
@@ -190,13 +190,13 @@ window.tiAsyncInit = function() {
     // Transport Object
     var transport = a2t.create('transport');
 
-    // Car rental start and end date/time
+    // Shuttle start and end date/time
     var startDateTime = new Date(2012, 08, 14, 11, 00); // On 09/14/2012, 11:00
     transport.setStartDateTime(startDateTime);
     var endDateTime = new Date(2012, 08, 16, 19, 00); // On 09/16/2012, 19:00
     transport.setEndDateTime(endDateTime);
 
-    // Rental start location address
+    // Shuttle pick-up/start location address
     var address1 = a2t.create('address');
     address1.setAddrLine1('Oakland International Airport');
     address1.setAddrLine2('100 Airport Rd');
@@ -205,7 +205,7 @@ window.tiAsyncInit = function() {
     address1.setCountry('USA');
     transport.setStartLocationAddress(address1);
     
-    // Rental end location address
+    // Shuttle drop-off/end location address
     var address2 = a2t.create('address');
     address2.setAddrLine1('San Francisco International Airport');
     address2.setCity('San Francisco');
