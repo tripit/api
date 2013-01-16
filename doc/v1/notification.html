@@ -40,9 +40,10 @@
       Currently, notifications may be subscribed to for changes to trip objects.
     </p>
     <p>
-      When a change is made to a trip to which you are subscribed, TripIt will
-      make a corresponding HTTP request to your server on a URL that you
-      provide. In order to provide the URL to TripIt, contact api-support@tripit.com. Please include the application name, email address used to register the application, and the desired callback URL in the email.
+      When a change is made to a trip to which you are subscribed, TripIt will make a corresponding HTTP request to your server on a URL that you provide in the following manner: on the first edit/delete on a trip or any of its trip items, a notification will be sent to your callback url. However, on subsequent changes to that trip for the immediate next 10 minutes, notifications are suppressed -- this is to prevent any flood of callbacks that may hit your server due to a large number of changes to a trip. 
+    </p>
+    <p>
+In order to provide the URL to TripIt, contact api-support@tripit.com. Please include the application name, email address used to register the application, and the desired callback URL in the email.
     </p>
     <p>The callback URL must use SSL/TLS (it must be an HTTPS URL) and it may not contain ? or &. It also must not redirect. Upon successful receipt of a notification it must return HTTP 200.
     <p>
