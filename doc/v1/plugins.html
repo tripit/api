@@ -25,7 +25,7 @@
       <li><a href="#overview_section">Overview</a></li>
       <li><a href="#loading_section">Loading the Add-to-TripIt Plugin</a></li>
       <li><a href="#example1_section">Example 1: Creating a hotel reservation (Lodging) object</a></li>
-      <li><a href="#example2_section">Example 2: Creating a shuttle reservation (Transport) object</a></li>
+      <li><a href="#example2_section">Example 2: Creating multiple plugin buttons on the same page</a></li>
       <li><a href="#js_api_section">JavaScript API</a></li>
 
     </ul>
@@ -45,9 +45,19 @@
     <p>
       <ul>
         <li>ActivityObject</li>
+        <li>CarObject</li>
         <li>LodgingObject</li>
         <li>RestaurantObject</li>
         <li>TransportObject</li>
+      </ul>
+    </p>
+    <p>
+      Other features of the plugin include:
+    </p>
+    <p>
+      <ul>
+        <li>Asynchronous JavaSript loading of the plugin - does not block any other Javascript currently existing on your page.</li>
+        <li>Multiple plugin buttons can exist on the same page.</li>
       </ul>
     </p>
 
@@ -171,7 +181,7 @@ window.tiAsyncInit = function() {
       </li>
     </ol>
 
-    <h3 id="example2_section">Example 2: Creating a shuttle reservation (Transport) object</h3>
+    <h3 id="example2_section">Example 2: Creating multiple plugin buttons on the same page</h3>
 
     <ol>
       <li>Add the TripIt JavaScript SDK and your custom code in your page once, ideally right after the beginning of the &lt;body&gt; tag:
@@ -184,8 +194,10 @@ window.tiAsyncInit = function() {
 
     // Your code that uses the TripIt SDK goes here...
     
+    //******* FIRST PLUGIN BUTTON *******
+
     // Creating an AddToTripIt plugin object
-    var a2t = TripIt.create('addToTripIt')
+    var a2t = TripIt.create('addToTripIt', 'add-to-tripit-plugin');
 
     // Transport Object
     var transport = a2t.create('transport');
@@ -225,6 +237,50 @@ window.tiAsyncInit = function() {
         console.log(data);
     });
 
+    //******* SECOND PLUGIN BUTTON *******
+
+    // Your code that uses the TripIt SDK goes here...
+    var a2t2 = TripIt.create('addToTripIt', 'add-to-tripit-plugin-2'); // The second parameter is the div id that will hold this plugin
+
+    var car = a2t2.create('car');
+    var start = new Date(2013, 07, 14, 11, 01, 02); // The month is actually August (08), since Javascript accepts month from 0-11
+    var end = new Date(2013, 08, 14, 12, 05, 07); // The month is actually Sept (09), since Javascript accepts month from 0-11
+    car.setDisplayName('Avis rental');
+    car.setBookingRate('$50');
+    car.setBookingSiteConfirmationNumber("DEF");
+    car.setBookingSiteName("bk");
+    car.setSupplierName("supplier");
+    car.setNotes('booking notes');
+    car.setTotalCost('$150');
+    car.setStartDateTime(start);
+    car.setEndDateTime(end);
+    var address1 = a2t2.create('address');
+    address1.setAddrLine1('500 Treat Ave');
+    address1.setCity('San Francisco');
+    address1.setCountry('USA');
+    address1.setZip('94110')
+    var address2 = a2t2.create('address');
+    address2.setAddrLine1('1000 Market Ave');
+    address2.setCity('San Francisco');
+    address2.setCountry('USA');
+    address2.setZip('94110')
+    car.setStartLocationAddress(address1);
+    car.setEndLocationAddress(address2);
+    car.setStartLocationName("start");
+    car.setEndLocationName("end");
+    car.setSupplierConfirmationNumber("123");
+    car.setCarDescription('description');
+    car.setCarType('type');
+    var person1 = a2t2.create('traveler');
+    person1.setFirstName('Tariq'); 
+    person1.setLastName('Islam');
+    car.setDriver(person1);
+    car.setMileageCharges('$10');
+
+   TripIt.initializePlugin(a2t2, function(data) {
+        console.log('2 CLIENT: status obtained: ');
+        console.log(data);
+    });
 };
 
 (function(d){
@@ -235,9 +291,13 @@ window.tiAsyncInit = function() {
     ref.parentNode.insertBefore(js, ref);
 }(document));</pre>
       </li>
-      <li>Place the following code wherever you want the plugin to appear on your purchase confirmation page.
+      <li>Place the following code wherever you want the first plugin to appear on your purchase confirmation page.
         <pre>
 &lt;div id="add-to-tripit-plugin"&gt;&lt;/div&gt;</pre>
+      </li>
+      <li>Place the following code wherever you want the second plugin to appear on your purchase confirmation page.
+        <pre>
+&lt;div id="add-to-tripit-plugin-2"&gt;&lt;/div&gt;</pre>
       </li>
     </ol>
 
@@ -282,6 +342,8 @@ window.tiAsyncInit = function() {
                     <a onclick="loadPage('js_sdk/activity_object.html');">Activity</a>
                     <br>
                     <a onclick="loadPage('js_sdk/address_object.html');">Address</a>
+                    <br>
+                    <a onclick="loadPage('js_sdk/car_object.html');">Car</a>
                     <br>
                     <a onclick="loadPage('js_sdk/lodging_object.html');">Lodging</a>
                     <br>
