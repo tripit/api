@@ -2033,62 +2033,82 @@ $</pre>
               <li>The marketing airline code of the AirSegment must not have a value of "--" (Other)</li>
            </ul>
           </td>
-       </tr>
-       <tr>
-         <td>200</td>
-         <td>Not Monitored</td>
-         <td>This flight is not being monitored even if it meets all of the criteria to be monitorable if the following conditions are true:
-           <ul>
-             <li>The flight is either not a real flight or TripIt doesn't have a record of it in its database.</li>
-             <li>If TripIt can't determine the current status of the flight</li>
-          </ul>
-         </td>
-       </tr>
-       <tr>
-         <td>300</td>
-         <td>Scheduled</td>
-         <td>The flight is monitored but the TripIt platform hasn't seen any updates to the flight yet.</td>
-       </tr>
-       <tr>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>Not Monitored</td>
+          <td>This flight is not being monitored even if it meets all of the criteria to be monitorable if the following conditions are true:
+            <ul>
+              <li>The flight is either not a real flight or TripIt doesn't have a record of it in its database.</li>
+              <li>If TripIt can't determine the current status of the flight</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td>300</td>
+          <td>Scheduled</td>
+          <td>The flight is monitored but the TripIt platform hasn't seen any updates to the flight yet.</td>
+        </tr>
+        <tr>
           <td>301</td>
           <td>On Time</td>
           <td>The flight is currently considered to be on time, which means that the (EstimatedDepartureDateTime - ScheduledDepartureDateTime) &lt;= 14 minutes.</td>
-       </tr>
+        </tr>
         <tr>
           <td>302</td>
           <td>In Flight - On Time</td>
           <td>The flight is currently in the air and is considered to be on time, which means that the (EstimatedArrivalDateTime - ScheduledArrivalDateTime) &lt;= 14 minutes.</td>
-       </tr>
+        </tr>
         <tr>
           <td>303</td>
           <td>Arrived - On Time</td>
           <td>The flight has arrived and the actual arrival time was within 14 minutes of the ScheduledArrivalDateTime.</td>
-       </tr>
+        </tr>
         <tr>
           <td>400</td>
           <td>Cancelled</td>
           <td>The flight has been cancelled.</td>
-       </tr>
+        </tr>
         <tr>
           <td>401</td>
           <td>Delayed</td>
           <td>The flight is currently considered to be on time, which means that the (EstimatedDepartureDateTime - ScheduledDepartureDateTime) &gt;= 15 minutes.</td>
-       </tr>
+        </tr>
         <tr>
           <td>402</td>
           <td>In Flight - late</td>
           <td>The flight is currently in the air and is considered to be on time, which means that the (EstimatedArrivalDateTime - ScheduledArrivalDateTime) &gt;= 15 minutes.</td>
-       </tr>
+        </tr>
         <tr>
           <td>403</td>
           <td>Arrived - late</td>
           <td>The flight has arrived and the actual arrival time was more than 14 minutes after the ScheduledArrivalDateTime.</td>
-       </tr>
+        </tr>
         <tr>
           <td>404</td>
           <td>Diverted</td>
           <td>The flight was diverted to an airport other than the one it was originally going to fly into.</td>
-       </tr>
+        </tr>
+        <tr>
+          <td>405</td>
+          <td>Possibly Delayed</td>
+          <td>The flight has possibly been delayed.</td>
+        </tr>
+        <tr>
+          <td>406</td>
+          <td>In Flight - Possibly Late</td>
+          <td>The flight is in flight and may possibly be late.</td>
+        </tr>
+        <tr>
+          <td>407</td>
+          <td>Arrived - Possibly Late</td>
+          <td>The flight has arrived but may possibly be late.</td>
+        </tr>
+        <tr>
+          <td>408</td>
+          <td>Unknown</td>
+          <td>The flight status is unknown.</td>
+        </tr>
      </table>
     </p>
 
