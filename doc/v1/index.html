@@ -62,6 +62,7 @@
         <li>TransportObject</li>
         <li>TripObject</li>
         <li>WeatherObject <i>read-only</i></li>
+        <li>TripParticipantObject <i>special</i></li>
       </ul>
     </p>
     <p>
@@ -1699,9 +1700,10 @@ Cache-Control: private
         <li>note</li>
         <li>rail</li>
         <li>restaurant</li>
-	<li>segment</li>
+        <li>segment</li>
         <li>transport</li>
         <li>trip</li>
+        <li>trip_participant <i>see below</i></li>
       </ul>
     </p>
     <p>
@@ -1727,7 +1729,32 @@ Pragma: no-cache
 <Response></Response>
 $</pre>
     </p>
+    <p>
+      When removing user from a trip, you need to specify the trip you want to update and the user you want to remove. The format looks like this:
+    </p>
+    <p>
+      <pre>https://api.tripit.com/v1/delete/trip_partcipant/trip_id/&lt;TripIt Object ID&gt;/profile_ref/&lt;Unique User Identifier&gt;</pre>
+    </p>
+    <p>
+      You will obtain user identifier from trip details (see <a href="#method_get">get/trip</a> API call). Sample delete request for deleting user <i>wKieDZalTIjn0wltsyMcLQ</i> from trip <i>770829</i>:
+    </p>
+    <p>
+<pre>
+$ curl -k -D /dev/tty --user &lt;username&gt;:&lt;password&gt; https://api.tripit.com/v1/delete/trip_participant/trip_id/770829/profile_ref/wKieDZalTIjn0wltsyMcLQ
+HTTP/1.1 200 OK
+Server: nginx/0.6.32
+Date: Thu, 04 Dec 2008 04:49:08 GMT
+Content-Type: text/xml; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Expires: Thu, 19 Nov 1981 08:52:00 GMT
+Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Pragma: no-cache
 
+<Response></Response>
+$</pre>
+    </p>
+    
     <h2 id="http_status_codes_section">HTTP Status Codes</h2>
     <p>
       The API will return the following HTTP Status Codes:
