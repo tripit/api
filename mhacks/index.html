@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="TripIt MHacks : Get started and readme for @Concur @MHacks">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>TripIt MHacks</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="http://tripit.github.io/api/">View API Documentation</a>
+
+          <h1 id="project_title">TripIt MHacks</h1>
+          <h2 id="project_tagline">Get started and readme for @Concur @MHacks</h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p></p><img src="https://www.tripit.com/press/sites/all/themes/tripit/images/logos/tripit_72dpi_500px.jpg" width="300px">
+
+<h2>What is TripIt?</h2>
+
+<p>TripIt is a travel plan organizer allowing you to forward confirmation emails and have an itineratry automatically created. TripIt is the go travel organizer for over 10 million users.</p>
+
+<h2>What can I do with TripIt APIs?</h2>
+<ul>
+    <li>Provide an "Add to TripIt" link on a travel booking confirmation page </li>
+    <li>Send TripIt flight arrival details to schedule airport pick-ups </li>
+    <li>Populate a flight-tracking or trip planning application with a TripIt traveler’s upcoming flights</li>
+</ul>
+
+<p>Easiest way to get started:</p>
+<pre><code>curl -k -D /dev/tty --user &lt;username&gt;:&lt;password&gt; https://api.tripit.com/v1/list/trip</code></pre>
+
+<p>Prefer oauth? Visit <a href="https://www.tripit.com/developer">https://www.tripit.com/developer</a> to register an app. Once registered set these headers:</p>
+<pre><code>
+Authorization: OAuth realm="https://api.tripit.com/",
+  oauth_consumer_key="consumer public key",
+  oauth_token="authorized access token",
+  oauth_signature_method="HMAC-SHA1",
+  oauth_signature="request signature",
+  oauth_timestamp="1229622199",
+  oauth_nonce="9b308304f41a4ac04fb4c4ce980c5277",
+  oauth_version="1.0"
+</code></pre>
+
+<p>For the full API documentation, and apps that use the APIs, please refer to:</p>
+
+<p><a href="http://tripit.github.io/api/doc/v1/index.html">http://tripit.github.io/api/doc/v1/index.html</a></p>
+
+<h2>SDKs / Sample Code</h2>
+
+<ul>
+    <li><a href="https://github.com/tripit/csharp_binding_v1">C#</a></li>
+    <li><a href="https://github.com/tripit/erlang_binding_v1">Erlang</a></li>
+    <li><a href="https://github.com/tripit/java_binding_v1">Java</a></li>
+    <li><a href="https://github.com/tripit/perl_binding_v1">Perl</a></li>
+    <li><a href="https://github.com/tripit/php_binding_v1">PHP</a></li>
+    <li><a href="https://github.com/tripit/python_binding_v1">Python</a></li>
+    <li><a href="https://github.com/tripit/ruby_binding_v1">Ruby</a></li>
+</ul>
+
+<p><strong>Creating a new trip:</strong></p>
+<p>Create a trip object
+<pre><code>
+$ cat /var/tmp/trip.xml 
+&lt;Request&gt;
+  &lt;Trip&gt;
+    &lt;start_date&gt;2008-12-09</start_date&gt;
+    &lt;end_date>2008-12-27&lt;/end_date&gt;
+    &lt;primary_location&gt;New York, NY&lt;/primary_location&gt;
+    &lt;PrimaryLocationAddress&gt;
+        &lt;address&gt;New York, NY&lt;/address&gt;
+        &lt;city&gt;New York&lt;/city&gt;
+        &lt;state&gt;NY&lt;/state&gt;
+        &lt;country&gt;US&lt;/country&gt;
+        &lt;latitude&gt;40.714269&lt;/latitude&gt;
+        &lt;longitude&gt;-74.005973&lt;/longitude&gt;
+    &lt;/PrimaryLocationAddress&gt;
+  &lt;/Trip&gt;
+&lt;/Request&gt;
+</code></pre>
+</p>
+
+<p>Send the trip object to /v1/create
+<pre><code>
+$ curl -k -D /dev/tty --data-urlencode xml@/var/tmp/trip.xml --user &lt;username&gt;:&lt;password&gt; https://api.tripit.com/v1/create
+HTTP/1.1 200 OK
+Server: nginx/0.6.32
+Date: Fri, 05 Dec 2008 22:12:35 GMT
+Content-Type: text/xml; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Expires: Thu, 19 Nov 1981 08:52:00 GMT
+Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Pragma: no-cache
+
+&lt;Response&gt;
+  &lt;Trip&gt;
+    &lt;id&gt;770846&lt;/id&gt;
+    &lt;start_date&gt;2008-12-09&lt;/start_date&gt;
+    &lt;end_date&gt;2008-12-27&lt;/end_date&gt;
+    &lt;display_name&gt;New York, NY, December 2008&lt;/display_name&gt;
+    &lt;image_url&gt;/images/places/general.jpg&lt;/image_url&gt;
+    &lt;is_private&gt;false&lt;/is_private&gt;
+    &lt;is_traveler&gt;true&lt;/is_traveler&gt;
+    &lt;primary_location&gt;New York, NY&lt;/primary_location&gt;
+    &lt;PrimaryLocationAddress&gt;
+        &lt;address&gt;New York, NY&lt;/address&gt;
+        &lt;city&gt;New York&lt;/city&gt;
+        &lt;state&gt;NY&lt;/state&gt;
+        &lt;country&gt;US&lt;/country&gt;
+        &lt;latitude&gt;40.714269&lt;/latitude&gt;
+        &lt;longitude&gt;-74.005973&lt;/longitude&gt;
+    &lt;/PrimaryLocationAddress&gt;
+  &lt;/Trip&gt;
+&lt;/Response&gt;
+</code></pre>
+</p>
+
+<p><strong>Adding a flight to a trip:</strong></p>
+<p>Create an air object
+<pre><code>
+$ cat /var/tmp/air.xml 
+&lt;Request&gt;
+  &lt;AirObject&gt;
+    &lt;is_client_traveler&gt;true&lt;/is_client_traveler&gt;
+    &lt;booking_site_name&gt;United Airlines&lt;/booking_site_name&gt;
+    &lt;booking_site_phone&gt;1-800-United-1&lt;/booking_site_phone&gt;
+    &lt;booking_site_url&gt;http://www.united.com/&lt;/booking_site_url&gt;
+    &lt;supplier_conf_num&gt;ABC123&lt;/supplier_conf_num&gt;
+    &lt;Segment&gt;
+      &lt;StartDateTime&gt;
+      &lt;date&gt;2009-09-04&lt;/date&gt;
+      &lt;time&gt;15:04:00&lt;/time&gt;
+    &lt;/StartDateTime&gt;
+    &lt;EndDateTime&gt;
+      &lt;date&gt;2009-09-04&lt;/date&gt;
+      &lt;time&gt;17:47:00&lt;/time&gt;
+    &lt;/EndDateTime&gt;
+    &lt;start_city_name&gt;Chicago&lt;/start_city_name&gt;
+    &lt;end_city_name&gt;San Francisco&lt;/end_city_name&gt;
+    &lt;marketing_airline&gt;UA&lt;/marketing_airline&gt;
+    &lt;marketing_flight_number&gt;137&lt;/marketing_flight_number&gt;
+    &lt;seats&gt;23J&lt;/seats&gt;
+  &lt;/Segment&gt;
+  &lt;Segment&gt;
+    &lt;StartDateTime&gt;
+      &lt;date&gt;2009-09-08&lt;/date&gt;
+      &lt;time&gt;16:32:00&lt;/time&gt;
+    &lt;/StartDateTime&gt;
+    &lt;EndDateTime&gt;
+      &lt;date&gt;2009-09-08&lt;/date&gt;
+      &lt;time&gt;22:42:00&lt;/time&gt;
+    &lt;/EndDateTime&gt;
+    &lt;start_city_name&gt;San Francisco&lt;/start_city_name&gt;
+    &lt;end_city_name&gt;Chicago&lt;/end_city_name&gt;
+    &lt;marketing_airline&gt;UA&lt;/marketing_airline&gt;
+    &lt;marketing_flight_number&gt;39&lt;/marketing_flight_number&gt;
+    &lt;seats&gt;19B&lt;/seats&gt;
+  &lt;/Segment&gt;
+  &lt;Traveler&gt;
+    &lt;first_name&gt;John&lt;/first_name&gt;
+    &lt;last_name&gt;Doe&lt;/last_name&gt;
+    &lt;frequent_traveler_num&gt;1234567890&lt;/frequent_traveler_num&gt;
+  &lt;/Traveler&gt;
+&lt;/AirObject&gt;
+&lt;/Request&gt;
+</code></pre></p>
+
+<p>Send the trip object to /v1/create
+<pre><code>
+$ curl -k -D /dev/tty --data-urlencode xml@/var/tmp/air.xml --user &lt;username&gt;:&lt;password&gt; https://api.tripit.com/v1/create
+HTTP/1.1 100 Continue
+
+HTTP/1.1 200 OK
+Server: nginx
+Date: Mon, 31 Aug 2009 23:51:39 GMT
+Content-Type: text/xml; charset=utf-8
+Transfer-Encoding: chunked
+Connection: close
+Cache-Control: private
+
+&lt;Response&gt;
+  &lt;timestamp&gt;1251762699&lt;/timestamp&gt;
+  &lt;num_bytes&gt;2470&lt;/num_bytes&gt;
+  &lt;AirObject&gt;
+    &lt;id&gt;1413&lt;/id&gt;
+    &lt;trip_id&gt;426&lt;/trip_id&gt;
+    &lt;is_client_traveler&gt;true&lt;/is_client_traveler&gt;
+    &lt;relative_url&gt;/reservation/show/id/1413&lt;/relative_url&gt;
+    &lt;display_name&gt;Your Flight&lt;/display_name&gt;
+    &lt;booking_site_name&gt;United Airlines&lt;/booking_site_name&gt;
+    &lt;booking_site_phone&gt;1-800-United-1&lt;/booking_site_phone&gt;
+    &lt;booking_site_url&gt;http://www.united.com/&lt;/booking_site_url&gt;
+    &lt;supplier_conf_num&gt;ABC123&lt;/supplier_conf_num&gt;
+    &lt;is_purchased&gt;true&lt;/is_purchased&gt;
+    &lt;Segment&gt;
+      &lt;Status&gt;
+        &lt;flight_status&gt;200&lt;/flight_status&gt;
+        &lt;last_modified&gt;1251762699&lt;/last_modified&gt;
+      &lt;/Status&gt;
+      &lt;StartDateTime&gt;
+        &lt;date&gt;2009-09-04&lt;/date&gt;
+        &lt;time&gt;15:04:00&lt;/time&gt;
+        &lt;timezone&gt;America/Chicago&lt;/timezone&gt;
+        &lt;utc_offset&gt;-05:00&lt;/utc_offset&gt;
+      &lt;/StartDateTime&gt;
+      &lt;EndDateTime&gt;
+        &lt;date&gt;2009-09-04&lt;/date&gt;
+        &lt;time&gt;17:47:00&lt;/time&gt;
+        &lt;timezone&gt;America/Los_Angeles&lt;/timezone&gt;
+        &lt;utc_offset&gt;-07:00&lt;/utc_offset&gt;
+      &lt;/EndDateTime&gt;
+      &lt;start_airport_code&gt;ORD&lt;/start_airport_code&gt;
+      &lt;start_city_name&gt;Chicago&lt;/start_city_name&gt;
+      &lt;end_airport_code&gt;SFO&lt;/end_airport_code&gt;
+      &lt;end_city_name&gt;San Francisco&lt;/end_city_name&gt;
+      &lt;marketing_airline&gt;United Airlines&lt;/marketing_airline&gt;
+      &lt;marketing_airline_code&gt;UA&lt;/marketing_airline_code&gt;
+      &lt;marketing_flight_number&gt;137&lt;/marketing_flight_number&gt;
+      &lt;aircraft&gt;763&lt;/aircraft&gt;
+      &lt;aircraft_display_name&gt;Boeing 767-300&lt;/aircraft_display_name&gt;
+      &lt;distance&gt;1841 miles&lt;/distance&gt;
+      &lt;duration&gt;4h, 43m&lt;/duration&gt;
+      &lt;seats&gt;23J&lt;/seats&gt;
+      &lt;stops&gt;nonstop&lt;/stops&gt;
+    &lt;/Segment&gt;
+    &lt;Segment&gt;
+      &lt;Status&gt;
+        &lt;flight_status&gt;200&lt;/flight_status&gt;
+        &lt;last_modified&gt;1251762699&lt;/last_modified&gt;
+      &lt;/Status&gt;
+      &lt;StartDateTime&gt;
+        &lt;date&gt;2009-09-08&lt;/date&gt;
+        &lt;time&gt;16:32:00&lt;/time&gt;
+        &lt;timezone&gt;America/Los_Angeles&lt;/timezone&gt;
+        &lt;utc_offset&gt;-07:00&lt;/utc_offset&gt;
+      &lt;/StartDateTime&gt;
+      &lt;EndDateTime&gt;
+        &lt;date&gt;2009-09-08&lt;/date&gt;
+        &lt;time&gt;22:42:00&lt;/time&gt;
+        &lt;timezone&gt;America/Chicago&lt;/timezone&gt;
+        &lt;utc_offset&gt;-05:00&lt;/utc_offset&gt;
+      &lt;/EndDateTime&gt;
+      &lt;start_airport_code&gt;SFO&lt;/start_airport_code&gt;
+      &lt;start_city_name&gt;San Francisco&lt;/start_city_name&gt;
+      &lt;end_airport_code&gt;ORD&lt;/end_airport_code&gt;
+      &lt;end_city_name&gt;Chicago&lt;/end_city_name&gt;
+      &lt;marketing_airline&gt;United Airlines&lt;/marketing_airline&gt;
+      &lt;marketing_airline_code&gt;UA&lt;/marketing_airline_code&gt;
+      &lt;marketing_flight_number&gt;39&lt;/marketing_flight_number&gt;
+      &lt;aircraft&gt;319&lt;/aircraft&gt;
+      &lt;aircraft_display_name&gt;Airbus A319&lt;/aircraft_display_name&gt;
+      &lt;distance&gt;1841 miles&lt;/distance&gt;
+      &lt;duration&gt;4h, 10m&lt;/duration&gt;
+      &lt;seats&gt;19B&lt;/seats&gt;
+      &lt;stops&gt;nonstop&lt;/stops&gt;
+    &lt;/Segment&gt;
+    &lt;Traveler&gt;
+      &lt;first_name&gt;John&lt;/first_name&gt;
+      &lt;last_name&gt;Doe&lt;/last_name&gt;
+      &lt;frequent_traveler_num&gt;1234567890&lt;/frequent_traveler_num&gt;
+    &lt;/Traveler&gt;
+  &lt;/AirObject&gt;
+&lt;/Response&gt;
+</code></pre>
+</p>
+
+<h2>Here's what others have done with TripIt</h2>
+<p><a href="http://appcrawlr.com/ios-apps/best-apps-tripit-integration">http://appcrawlr.com/ios-apps/best-apps-tripit-integration</a></p>
+
+<p><a href="#addl">Back to Top</a></p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">TripIt MHacks maintained by <a href="https://github.com/aosyborg">Dave Symons</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
