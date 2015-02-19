@@ -33,6 +33,12 @@
       by a Record Locator value.  Following is a list of object types supported by the CRS API:
     </p>
     <p>
+      CRS Trip Details:
+    <ul>
+      <li>CrsTripDetails</li>
+    </ul>
+    </p>
+    <p>
       Travel Object Types:
       <ul>
         <li>ActivityObject</li>
@@ -273,15 +279,14 @@
 
     <p>
       Note that if a brand new TripIt trip is created in step 2b above, the newly-created trip
-      is tagged with two pieces of information:
+      is tagged with the following pieces of information:
     </p>
 
     <ol>
       <li>
-        If specified in the request, we tag the trip with the <i>company_key</i> value passed
-        as a request parameter to <i>crsLoadReservations</i>.  This company key is used to
-        identify the partner's client or other entity to be associated with this newly-created
-        itinerary.
+        If specified in the request, we tag the trip with the <i>company_key</i>, <i>is_private</i>, <i>display_name</i> value passed
+        as a request parameter to <i>crsLoadReservations</i> or passed in the input xml as '&lt;CrsTripDetails&gt;'. The values passed in the xml will have higher precedence than the values passed as a request parameter.
+        This company key is used to identify the partner's client or other entity to be associated with this newly-created itinerary.
       </li>
       <li>
         We also store the specific oauth consumer (partner) that caused the trip to be created.
@@ -295,8 +300,17 @@
     <p>
       Here is what the post data would look like:
       <pre>
-company_key=SomeCompanyName&amp;\
-xml=&lt;CrsRequest&gt;
+company_key=SomeCompanyName&amp;trip_is_private=booleanvalue&amp;trip_display_name=SomeDisplayName&amp;\
+xml=&lt;CrsRequest&gt; &lt;!-- this field is optional --&gt;
+      &lt;CrsTripDetails&gt;
+        &lt;TripPurposes&gt;
+         &lt;purpose_type_code&gt; B &lt;/purpose_type_code&gt;
+         &lt;is_auto_generated&gt; B &lt;/is_auto_generated&gt;
+        &lt;/TripPurposes&gt;
+        &lt;display_name&gt; &lt;/display_name&gt;
+        &lt;company_key&gt; &lt;/company_key&gt;
+        &lt;is_private&gt; &lt;/is_private&gt;
+      &lt;/CrsTripDetails&gt;
   &lt;AirObject&gt;
     &lt;record_locator&gt;ABC123&lt;/record_locator&gt; &lt;!-- this field is used to group objects and remarks --&gt;
     &lt;supplier_conf_num&gt;ABC123&lt;/supplier_conf_num&gt; &lt;!-- this field is rendered and editable to the TripIt user --&gt;
