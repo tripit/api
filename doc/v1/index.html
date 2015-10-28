@@ -1893,7 +1893,7 @@ $</pre>
       was after the check-out date for that LodgingObject.
     </p>
     <p>
-      <i>TBD - document more of these</i>
+      <!--i>TBD - document more of these</i-->
     </p>
     <h4>Error Object</h4>
     <p>
@@ -1902,11 +1902,11 @@ $</pre>
       Request.  The entire request transaction will be failed.
     </p>
     <p>
-      <i>TBD - document examples of these</i>
+      <!--i>TBD - document examples of these</i-->
     </p>
     <h2 id="pagination">Pagination</h2>
     <p>
-      Pagination is activated for requests to the <b>/v1/list/trip</b> endpoint in any of the following three circumstances:
+      Pagination is activated for all requests to the <b>/v1/list/object</b> endpoint, and requests to the <b>/v1/list/trip</b> endpoint in any of the following three circumstances:
     </p>
     <ol>
       <li>request parameter 'past' == true (requesting past trip data), or</li>
@@ -1914,14 +1914,14 @@ $</pre>
       <li>for upcoming trips request, the set of upcoming trips is greater than 50 trips.</li>
     </ol>
     <p>
-      Clients can specify request parameter values in their requests for '<b>page_num</b>' and/or '<b>page_size</b>'.  If not specified by the client, the <b>default value for page_size is 5</b>.  Both of these request parameters must have positive integer values and the value for <b>page_num</b> must be less than or equal to the value of &lt;max_page&gt; (defined below).
+      Clients can specify request parameter values in their requests for '<b>page_num</b>' and/or '<b>page_size</b>'.  If not specified by the client, the <b>default value for page_size is 5 for trips and 25 for objects</b>.  Both of these request parameters must have positive integer values and the value for <b>page_num</b> must be less than or equal to the value of &lt;max_page&gt; (defined below).
     </p>
     <p>
       There are 3 new response elements that are declared in the <a href="https://api.tripit.com/xsd/tripit-api-res-v1.xsd">response xsd</a>:
     </p>
     <ul>
       <li>&lt;page_num&gt;: current page number</li>
-      <li>&lt;page_size&gt;: number of items (ie: trips) in each page</li>
+      <li>&lt;page_size&gt;: number of items (ie: trips or objects) in each page</li>
       <li>&lt;max_page&gt;: the number of the last page</li>
     </ul>
     
