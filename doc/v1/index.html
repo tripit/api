@@ -63,6 +63,7 @@
         <li>TransportObject</li>
         <li>TripObject</li>
         <li>WeatherObject <i>read-only</i></li>
+        <li>PartnerAgency <i>special</i></li>
         <li>TripParticipantObject <i>special</i></li>
       </ul>
     </p>
@@ -708,6 +709,14 @@ Cache-Control: private
       &lt;Trip&gt; plus the &lt;AirObject&gt;, and
       &lt;WeatherObject&gt; sections that are associated with the
       trip.
+      <p>
+        Note the following about the response object:
+        <ul>
+          <li>&lt;Agency&gt; block nested inside of the &lt;AirObject&gt;, is used to encapsulate TMC information. &lt;Agency&gt; is available on all <a href="#reservation_objects_note">Reservation Objects</a>.</li>
+          <li>Response also includes &lt;PartnerAgency&gt; block(s), right after the &lt;WeatherObject&gt; block(s).
+            This is only because the &lt;partner_agency_id&gt; field of &lt;Agency&gt; block, matches that of a partner TMC.</li>
+        </ul>
+      </p>
    </p>
     <p>
       <pre>
@@ -754,6 +763,15 @@ Cache-Control: private
     &lt;relative_url&gt;/reservation/show/id/4042627&lt;/relative_url&gt;
     &lt;display_name&gt;Your Flight&lt;/display_name&gt;
     &lt;is_purchased&gt;true&lt;/is_purchased&gt;
+      &lt;Agency&gt;
+        &lt;agency_conf_num&gt;ADL-123&lt;/agency_conf_num&gt;
+        &lt;agency_name&gt;Adelman Travel&lt;/agency_name&gt;
+        &lt;agency_phone&gt;(800) 248-5562&lt;/agency_phone&gt;
+        &lt;agency_email_address&gt;jane.doe@adelmantravel.com&lt;/agency_email_address&gt;
+        &lt;agency_url&gt;http://www.adelmantravel.com/&lt;/agency_url&gt;
+        &lt;agency_contact&gt;Ms  Jane Doe&lt;/agency_contact&gt;
+        &lt;partner_agency_id&gt;1&lt;/partner_agency_id&gt;
+      &lt;/Agency&gt;
     &lt;Segment&gt;
       &lt;Status&gt;
         &lt;EstimatedDepartureDateTime&gt;
@@ -809,6 +827,14 @@ Cache-Control: private
     &lt;avg_low_temp_c&gt;2.7777777777778&lt;/avg_low_temp_c&gt;
     &lt;avg_wind_speed_kn&gt;13&lt;/avg_wind_speed_kn&gt;
   &lt;/WeatherObject&gt;
+  &lt;PartnerAgency&gt;
+    &lt;partner_agency_id&gt;1&lt;/partner_agency_id&gt;
+    &lt;partner_agency_name&gt;Adelman Travel&lt;/partner_agency_name&gt;
+    &lt;partner_agency_short_name&gt;Adelman Travel&lt;/partner_agency_short_name&gt;
+    &lt;partner_agency_logo_small_url&gt;https://www.tripit.com/uploads/images/4/9/9/499d464439690088810193770e9cd9d67aa.png&lt;/partner_agency_logo_small_url&gt;
+    &lt;partner_agency_logo_medium_url&gt;https://www.tripit.com/uploads/images/7/1/2/7124d3adfdbf63da7149cbfd06c86baa40b.png&lt;/partner_agency_logo_medium_url&gt;
+    &lt;partner_agency_logo_large_url&gt;https://www.tripit.com/uploads/images/9/9/2/9928a98449b064c8acc1c2159f588f078b4.png&lt;/partner_agency_logo_large_url&gt;
+  &lt;/PartnerAgency&gt;
   &lt;Profile ref="VPNrwg9_2vW2j3DHX_pAzA"&gt;
     &lt;is_client&gt;true&lt;/is_client&gt;
     &lt;is_pro&gt;true&lt;/is_pro&gt;
@@ -1060,6 +1086,14 @@ Pragma: no-cache
       Another example in which we're requesting all objects within
       Trip #115 that are of type <b>air</b>.
     </p>
+    <p>
+        Note the following about the response object:
+      <ul>
+        <li>&lt;Agency&gt; block nested inside of the &lt;AirObject&gt;, is used to encapsulate TMC information. &lt;Agency&gt; is available on all <a href="#reservation_objects_note">Reservation Objects</a>.</li>
+        <li>Response also includes &lt;PartnerAgency&gt; block(s), right after the &lt;AirObject&gt; block(s).
+          This is only because the &lt;partner_agency_id&gt; field of &lt;Agency&gt; block, matches that of a partner TMC.</li>
+      </ul>
+    </p>
     <pre>
 $ curl -k -D /dev/tty --user &lt;username&gt;:&lt;password&gt; https://api.tripit.com/v1/list/object/trip_id/115/type/air
 HTTP/1.1 200 OK
@@ -1078,7 +1112,19 @@ Cache-Control: private
   &lt;is_traveler&gt;true&lt;/is_traveler&gt;
   &lt;relative_url&gt;/reservation/show/id/319&lt;/relative_url&gt;
   &lt;display_name&gt;Your Flight&lt;/display_name&gt;
+  &lt;booking_site_name&gt;Expedia&lt;/booking_site_name&gt;
+  &lt;booking_site_email_address&gt;customercare@expedia.com&lt;/booking_site_email_address&gt;
+  &lt;booking_site_url&gt;http://www.expedia.com&lt;/booking_site_url&gt;
   &lt;is_purchased&gt;true&lt;/is_purchased&gt;
+  &lt;Agency&gt;
+    &lt;agency_conf_num&gt;ADL-123&lt;/agency_conf_num&gt;
+    &lt;agency_name&gt;Adelman Travel&lt;/agency_name&gt;
+    &lt;agency_phone&gt;(800) 248-5562&lt;/agency_phone&gt;
+    &lt;agency_email_address&gt;jane.doe@adelmantravel.com&lt;/agency_email_address&gt;
+    &lt;agency_url&gt;http://www.adelmantravel.com/&lt;/agency_url&gt;
+    &lt;agency_contact&gt;Ms  Jane Doe&lt;/agency_contact&gt;
+    &lt;partner_agency_id&gt;1&lt;/partner_agency_id&gt;
+  &lt;/Agency&gt;
   &lt;Segment&gt;
     &lt;StartDateTime&gt;
       &lt;date&gt;2009-05-27&lt;/date&gt;
@@ -1105,6 +1151,14 @@ Cache-Control: private
     &lt;stops&gt;nonstop&lt;/stops&gt;
   &lt;/Segment&gt;
 &lt;/AirObject&gt;
+&lt;PartnerAgency&gt;
+    &lt;partner_agency_id&gt;1&lt;/partner_agency_id&gt;
+    &lt;partner_agency_name&gt;Adelman Travel&lt;/partner_agency_name&gt;
+    &lt;partner_agency_short_name&gt;Adelman Travel&lt;/partner_agency_short_name&gt;
+    &lt;partner_agency_logo_small_url&gt;https://www.tripit.com/uploads/images/4/9/9/499d464439690088810193770e9cd9d67aa.png&lt;/partner_agency_logo_small_url&gt;
+    &lt;partner_agency_logo_medium_url&gt;https://www.tripit.com/uploads/images/7/1/2/7124d3adfdbf63da7149cbfd06c86baa40b.png&lt;/partner_agency_logo_medium_url&gt;
+    &lt;partner_agency_logo_large_url&gt;https://www.tripit.com/uploads/images/9/9/2/9928a98449b064c8acc1c2159f588f078b4.png&lt;/partner_agency_logo_large_url&gt;
+&lt;/PartnerAgency&gt;
 &lt;/Response&gt;
 </pre>
     <h3 id="method_create">create</h3>
@@ -1220,8 +1274,17 @@ $ cat /var/tmp/air.xml
     &lt;is_client_traveler&gt;true&lt;/is_client_traveler&gt;
     &lt;booking_site_name&gt;United Airlines&lt;/booking_site_name&gt;
     &lt;booking_site_phone&gt;1-800-United-1&lt;/booking_site_phone&gt;
+    &lt;booking_site_email_address&gt;example@united.com&lt;/booking_site_email_address&gt;
     &lt;booking_site_url&gt;http://www.united.com/&lt;/booking_site_url&gt;
     &lt;supplier_conf_num&gt;ABC123&lt;/supplier_conf_num&gt;
+    &lt;Agency&gt;
+      &lt;agency_conf_num&gt;ADL-123&lt;/agency_conf_num&gt;
+      &lt;agency_name&gt;Adelman Travel&lt;/agency_name&gt;
+      &lt;agency_phone&gt;(800) 248-5562&lt;/agency_phone&gt;
+      &lt;agency_email_address&gt;jane.doe@adelmantravel.com&lt;/agency_email_address&gt;
+      &lt;agency_url&gt;http://www.adelmantravel.com/&lt;/agency_url&gt;
+      &lt;agency_contact&gt;Ms  Jane Doe&lt;/agency_contact&gt;
+    &lt;/Agency&gt;
     &lt;Segment&gt;
       &lt;StartDateTime&gt;
       &lt;date&gt;2009-09-04&lt;/date&gt;
@@ -1262,6 +1325,14 @@ $ cat /var/tmp/air.xml
 </pre>
     </p>
     <p>
+      Note the following about the above request object:
+      <ul>
+        <li>&lt;Agency&gt; is available on all <a href="#reservation_objects_note">Reservation Objects</a>.</li>
+        <li>&lt;Agency&gt; block DOES NOT contain &lt;partner_agency_id&gt; field, since it is read-only</li>
+        <li>request does not include &lt;PartnerAgency&gt; block(s) since that information is read-only</li>
+      </ul>
+    </p>
+    <p>
       Here is a sample <i>create</i> request for a Air object:
 
       <pre>
@@ -1287,9 +1358,19 @@ Cache-Control: private
     &lt;display_name&gt;Your Flight&lt;/display_name&gt;
     &lt;booking_site_name&gt;United Airlines&lt;/booking_site_name&gt;
     &lt;booking_site_phone&gt;1-800-United-1&lt;/booking_site_phone&gt;
+    &lt;booking_site_email_address&gt;example@united.com&lt;/booking_site_email_address&gt;
     &lt;booking_site_url&gt;http://www.united.com/&lt;/booking_site_url&gt;
     &lt;supplier_conf_num&gt;ABC123&lt;/supplier_conf_num&gt;
     &lt;is_purchased&gt;true&lt;/is_purchased&gt;
+    &lt;Agency&gt;
+      &lt;agency_conf_num&gt;ADL-123&lt;/agency_conf_num&gt;
+      &lt;agency_name&gt;Adelman Travel&lt;/agency_name&gt;
+      &lt;agency_phone&gt;(800) 248-5562&lt;/agency_phone&gt;
+      &lt;agency_email_address&gt;jane.doe@adelmantravel.com&lt;/agency_email_address&gt;
+      &lt;agency_url&gt;http://www.adelmantravel.com/&lt;/agency_url&gt;
+      &lt;agency_contact&gt;Ms  Jane Doe&lt;/agency_contact&gt;
+      &lt;partner_agency_id&gt;1&lt;/partner_agency_id&gt;
+    &lt;/Agency&gt;
     &lt;Segment&gt;
       &lt;Status&gt;
         &lt;flight_status&gt;200&lt;/flight_status&gt;
@@ -1358,6 +1439,14 @@ Cache-Control: private
       &lt;frequent_traveler_num&gt;1234567890&lt;/frequent_traveler_num&gt;
     &lt;/Traveler&gt;
   &lt;/AirObject&gt;
+  &lt;PartnerAgency&gt;
+      &lt;partner_agency_id&gt;1&lt;/partner_agency_id&gt;
+      &lt;partner_agency_name&gt;Adelman Travel&lt;/partner_agency_name&gt;
+      &lt;partner_agency_short_name&gt;Adelman Travel&lt;/partner_agency_short_name&gt;
+      &lt;partner_agency_logo_small_url&gt;https://www.tripit.com/uploads/images/4/9/9/499d464439690088810193770e9cd9d67aa.png&lt;/partner_agency_logo_small_url&gt;
+      &lt;partner_agency_logo_medium_url&gt;https://www.tripit.com/uploads/images/7/1/2/7124d3adfdbf63da7149cbfd06c86baa40b.png&lt;/partner_agency_logo_medium_url&gt;
+      &lt;partner_agency_logo_large_url&gt;https://www.tripit.com/uploads/images/9/9/2/9928a98449b064c8acc1c2159f588f078b4.png&lt;/partner_agency_logo_large_url&gt;
+  &lt;/PartnerAgency&gt;
 &lt;/Response&gt;
 $</pre>
     </p>
@@ -1367,6 +1456,9 @@ $</pre>
         <li>The &lt;Segment&gt; objects have considerably more information in them as the TripIt platform "enriches" the &lt;Segment&gt; objects (e.g. &lt;distance&gt;, &lt;aircraft&gt;, etc...).</li>
         <li>The TripIt user this call was executed on behalf of has a TripIt pro account and so the &lt;Segment&gt; objects now have &lt;Status&gt; objects that indicate the current status of this flight.</li>
         <li>All the DateTime objects now have &lt;timezone&gt; and &lt;utc_offset&gt; as the TripIt platform was able to figure that out.</li>
+        <li>&lt;Agency&gt; block nested inside of the &lt;AirObject&gt;, is used to encapsulate TMC information. &lt;Agency&gt; is available on all <a href="#reservation_objects_note">Reservation Objects</a>.</li>
+        <li>Response also includes a &lt;PartnerAgency&gt; block, right after the &lt;AirObject&gt; block.
+          This is only because the &lt;partner_agency_id&gt; field of &lt;Agency&gt; block, matches that of a partner TMC.</li>
       </ul>
     </p>
     <h3 id="method_replace">replace</h3>
@@ -1850,6 +1942,20 @@ $</pre>
     <p>
       These schemas completely describe all of the valid XML documents
       that can be posted to and received from the API.
+      <p id="reservation_objects_note">
+        Following kinds of &lt;object_type&gt;s are categorized as <b>Reservation Objects</b>
+        <ul>
+          <li>air</li>
+          <li>lodging</li>
+          <li>car</li>
+          <li>parking</li>
+          <li>rail</li>
+          <li>transport</li>
+          <li>cruise</li>
+          <li>restaurant</li>
+          <li>activity</li>
+      </ul>
+      </p>
     </p>
     <h3>Request Object</h3>
     <p>
