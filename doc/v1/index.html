@@ -712,9 +712,8 @@ Cache-Control: private
       <p>
         Note the following about the response object:
         <ul>
-          <li>&lt;Agency&gt; block nested inside of the &lt;AirObject&gt;, is used to encapsulate TMC information. &lt;Agency&gt; is available on all <a href="#reservation_objects_note">Reservation Objects</a>.</li>
-          <li>Response also includes &lt;PartnerAgency&gt; block(s), right after the &lt;WeatherObject&gt; block(s).
-            This is only because the &lt;partner_agency_id&gt; field of &lt;Agency&gt; block, matches that of a partner TMC.</li>
+          <li>&lt;Agency&gt;, nested inside of the &lt;AirObject&gt;, is used for travel agency/TMC information. &lt;Agency&gt; is available on all <a href="#reservation_objects_note">Reservation Objects</a>.</li>
+          <li>In the response, &lt;PartnerAgency&gt; block(s), following the &lt;WeatherObject&gt; block(s) appears for qualifying agencies.</li>
         </ul>
       </p>
    </p>
@@ -1089,9 +1088,8 @@ Pragma: no-cache
     <p>
         Note the following about the response object:
       <ul>
-        <li>&lt;Agency&gt; block nested inside of the &lt;AirObject&gt;, is used to encapsulate TMC information. &lt;Agency&gt; is available on all <a href="#reservation_objects_note">Reservation Objects</a>.</li>
-        <li>Response also includes &lt;PartnerAgency&gt; block(s), right after the &lt;AirObject&gt; block(s).
-          This is only because the &lt;partner_agency_id&gt; field of &lt;Agency&gt; block, matches that of a partner TMC.</li>
+        <li>&lt;Agency&gt;, nested inside of the &lt;AirObject&gt;, is used for travel agency/TMC information. &lt;Agency&gt; is available on all <a href="#reservation_objects_note">Reservation Objects</a>.</li>
+        <li>In the response, &lt;PartnerAgency&gt; block(s), following the &lt;AirObject&gt; block(s) appears for qualifying agencies.</li>
       </ul>
     </p>
     <pre>
@@ -1456,9 +1454,8 @@ $</pre>
         <li>The &lt;Segment&gt; objects have considerably more information in them as the TripIt platform "enriches" the &lt;Segment&gt; objects (e.g. &lt;distance&gt;, &lt;aircraft&gt;, etc...).</li>
         <li>The TripIt user this call was executed on behalf of has a TripIt pro account and so the &lt;Segment&gt; objects now have &lt;Status&gt; objects that indicate the current status of this flight.</li>
         <li>All the DateTime objects now have &lt;timezone&gt; and &lt;utc_offset&gt; as the TripIt platform was able to figure that out.</li>
-        <li>&lt;Agency&gt; block nested inside of the &lt;AirObject&gt;, is used to encapsulate TMC information. &lt;Agency&gt; is available on all <a href="#reservation_objects_note">Reservation Objects</a>.</li>
-        <li>Response also includes a &lt;PartnerAgency&gt; block, right after the &lt;AirObject&gt; block.
-          This is only because the &lt;partner_agency_id&gt; field of &lt;Agency&gt; block, matches that of a partner TMC.</li>
+        <li>&lt;Agency&gt;, nested inside of the &lt;AirObject&gt;, is used for travel agency/TMC information. &lt;Agency&gt; is available on all <a href="#reservation_objects_note">Reservation Objects</a>.</li>
+        <li>In the response, &lt;PartnerAgency&gt; block(s), following the &lt;AirObject&gt; block(s) appears for qualifying agencies.</li>
       </ul>
     </p>
     <h3 id="method_replace">replace</h3>
