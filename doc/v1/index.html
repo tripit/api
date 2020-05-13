@@ -511,13 +511,17 @@ Pragma: no-cache
       <li>102.2 - invalid consumer key</li>
       <li>102.3 - consumer key does not match key for token</li>
       <li>102.4 - consumer is not active</li>
+      <li>102.5 - consumer is deprecated</li>
       <li>103.1 - nonce already used</li>
       <li>104.1 - invalid signature</li>
       <li>105.1 - invalid timestamp</li>
       <li>105.2 - timestamp out of range</li>
       <li>105.3 - expired timestamp</li>
       <li>106.1 - invalid token key</li>
-      <li>106.2 - request token not found</li>
+      <li>106.2 - request token present but not found</li>
+      <li>106.3 - request token found but not authorized</li>
+      <li>106.4 - request token not present</li>
+      <li>106.5 - request token found but expired</li>
     </ul>
     <h2 id="encoding_section">Encoding</h2>
     <p>
